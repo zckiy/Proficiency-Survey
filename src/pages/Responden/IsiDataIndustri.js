@@ -41,7 +41,7 @@ function IsiDataIndustri() {
                         fullWidth
                         margin="normal"
                         InputLabelProps={{ shrink: true }}
-                        
+                        required
                         
                     />
                     <TextField
@@ -49,6 +49,7 @@ function IsiDataIndustri() {
                         variant="outlined"
                         fullWidth
                         margin="normal"
+                        type="email"
                         InputLabelProps={{ shrink: true }}
                         
                         
