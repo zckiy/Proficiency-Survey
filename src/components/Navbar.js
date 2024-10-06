@@ -6,8 +6,15 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Logo from '../assets/images/image.png';
+import { Routes, Route, Link } from 'react-router-dom';
+import DiagramSurvey from '../pages/Responden/DiagramSurvey';
 
-const pages = ['Home', 'Diagram', 'Survey', 'Prodi'];
+const pages = [
+    { name: 'Home', path: '/home' },
+    { name: 'Diagram', path: '/diagram' },
+    { name: 'Survey', path: '/survey' },
+    { name: 'Prodi', path: '/prodi' }
+];
 
 function ResponsiveAppBar() {
     return (
@@ -43,24 +50,32 @@ function ResponsiveAppBar() {
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexGrow: 1 }}>
                         {pages.map((page) => (
                             <Button
-                                key={page}
-                                sx={{ 
-                                    my: 2, 
-                                    color: 'white', 
-                                    display: 'block', 
-                                    textTransform: 'none', 
-                                    fontWeight: 500, 
-                                    mx: 1, 
-                                    '&:hover': { 
-                                        backgroundColor: 'rgba(255, 255, 255, 0.2)', 
-                                        borderRadius: 1 
-                                    } 
+                                key={page.name}
+                                component={Link}
+                                to={page.path}
+                                sx={{
+                                    my: 2,
+                                    color: 'white',
+                                    display: 'block',
+                                    textTransform: 'none',
+                                    fontWeight: 500,
+                                    mx: 1,
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                        borderRadius: 1
+                                    }
                                 }}
                             >
-                                {page}
+                                {page.name}
                             </Button>
                         ))}
                     </Box>
+                    {/* Routing */}
+                    <Routes>
+                        <Route path="/diagramSurvey" element={<DiagramSurvey />} />
+                        
+
+                    </Routes>
                 </Toolbar>
             </Container>
         </AppBar>

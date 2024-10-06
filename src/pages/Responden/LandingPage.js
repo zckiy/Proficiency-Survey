@@ -3,6 +3,10 @@ import { Box, Container, Typography, Grid, Card, CardContent, IconButton } from 
 import Slider from 'react-slick'; // Import Slider
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Routes, Route, Link } from 'react-router-dom';
+import IsiDataAlumni from './IsiDataAlumni';
+import IsiDataDosen from './IsiDataDosen';
+import IsiDataIndustri from './IsiDataIndustri';
 
 // Impor gambar dengan jalur yang benar
 import lulusanImage from '../../assets/images/lulusan.png';
@@ -65,7 +69,7 @@ function LandingPages() {
             </Box>
           </Slider>
 
-          <Card sx={{ backgroundColor: '#f5f5f5', padding: 2, marginTop: 2 }}>
+          <Card sx={{ backgroundColor: '#f5f5f5', padding: 2, marginTop: 4 }}>
             <CardContent>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>
                 Graduate Expected Proficiency Level Survey
@@ -87,19 +91,21 @@ function LandingPages() {
         <Grid container spacing={4} sx={{ marginTop: 2 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Box
-                component="img"
-                src={alumniImage}
-                alt="Alumni"
-                sx={{
-                  width: '50%',
-                  height: 140,
-                  cursor: 'pointer',
-                  transition: '0.3s',
-                  '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
-                }}
-                onClick={() => console.log('Navigating to Alumni page...')} // Tindakan saat gambar di-klik
-              />
+              <Link to="/dataAlumni">
+                <Box
+                  component="img"
+                  src={alumniImage}
+                  alt="Alumni"
+                  sx={{
+                    width: '50%',
+                    height: 140,
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
+                  }}
+                  onClick={() => console.log('Navigating to Alumni page...')} // Tindakan saat gambar di-klik
+                />
+              </Link>
               <CardContent>
                 <Typography gutterBottom variant="h6" component="div">
                   ALUMNI
@@ -109,19 +115,21 @@ function LandingPages() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Box
-                component="img"
-                src={dosenImage}
-                alt="Dosen"
-                sx={{
-                  width: '50%',
-                  height: 140,
-                  cursor: 'pointer',
-                  transition: '0.3s',
-                  '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
-                }}
-                onClick={() => console.log('Navigating to Dosen page...')} // Tindakan saat gambar di-klik
-              />
+              <Link to="/dataDosen">
+                <Box
+                  component="img"
+                  src={dosenImage}
+                  alt="Dosen"
+                  sx={{
+                    width: '50%',
+                    height: 140,
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
+                  }}
+                  onClick={() => console.log('Navigating to Dosen page...')} // Tindakan saat gambar di-klik
+                />
+              </Link>
               <CardContent>
                 <Typography gutterBottom variant="h6" component="div">
                   DOSEN
@@ -131,19 +139,21 @@ function LandingPages() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Box
-                component="img"
-                src={industriImage}
-                alt="Industri"
-                sx={{
-                  width: '50%',
-                  height: 140,
-                  cursor: 'pointer',
-                  transition: '0.3s',
-                  '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
-                }}
-                onClick={() => console.log('Navigating to Industri page...')} // Tindakan saat gambar di-klik
-              />
+              <Link to="/dataIndustri">
+                <Box
+                  component="img"
+                  src={industriImage}
+                  alt="Industri"
+                  sx={{
+                    width: '50%',
+                    height: 140,
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
+                  }}
+                  onClick={() => console.log('Navigating to Industri page...')} // Tindakan saat gambar di-klik
+                />
+              </Link>
               <CardContent>
                 <Typography gutterBottom variant="h6" component="div">
                   INDUSTRI
@@ -168,6 +178,13 @@ function LandingPages() {
           bottom: 0,
         }}
       >
+        {/* Routing */}
+        <Routes>
+          <Route path="/dataAlumni" element={<IsiDataAlumni />} />
+          <Route path="/dataDosen" element={<IsiDataDosen />} />
+          <Route path="/dataIndustri" element={<IsiDataIndustri />} />
+
+        </Routes>
         <Typography variant="body2">@ 2024 - Level Survey</Typography>
       </Box>
     </Box>
