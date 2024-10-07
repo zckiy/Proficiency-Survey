@@ -6,7 +6,13 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 
 // Create theme
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+      background: {
+          default: '#E8F0FE', // Warna latar belakang halaman
+      },
+  },
+});
 
 // Get root element
 const container = document.getElementById('root');

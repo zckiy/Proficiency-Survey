@@ -1,20 +1,15 @@
 import React from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-const theme = createTheme({
-    palette: {
-        background: {
-            default: '#E8F0FE', // Warna latar belakang halaman
-        },
-    },
-});
+import { Container, Typography } from '@mui/material';
 
 function DiagramSurvey() {
-    return (
-        <ThemeProvider theme={theme}>
-            Diagram 
-        </ThemeProvider>
-    );
+  return (
+    <Container sx={{ marginTop: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Diagram Survey
+      </Typography>
+      {/* Tambahkan konten diagram di sini */}
+    </Container>
+  );
 }
 
 export default DiagramSurvey;
