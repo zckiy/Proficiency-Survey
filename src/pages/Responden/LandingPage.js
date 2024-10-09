@@ -97,6 +97,7 @@ function LandingPages() {
                   src={alumniImage}
                   alt="Alumni"
                   sx={{
+                    marginTop: '5px',
                     width: '50%',
                     height: 140,
                     cursor: 'pointer',
@@ -121,6 +122,7 @@ function LandingPages() {
                   src={dosenImage}
                   alt="Dosen"
                   sx={{
+                    marginTop: '5px',
                     width: '50%',
                     height: 140,
                     cursor: 'pointer',
@@ -145,6 +147,7 @@ function LandingPages() {
                   src={industriImage}
                   alt="Industri"
                   sx={{
+                    marginTop: '5px',
                     width: '50%',
                     height: 140,
                     cursor: 'pointer',

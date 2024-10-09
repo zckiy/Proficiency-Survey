@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Box, Typography, TextField, Button, CssBaseline } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
 
 // Buat tema dengan latar belakang khusus
 const theme = createTheme({
@@ -15,7 +16,7 @@ function IsiDataAlumni() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Container component="main" maxWidth="xs" sx={{ marginTop: '50px' }}>
+            <Container component="main" maxWidth="xs" sx={{ marginTop: '150px' }}>
                 <Box
                     sx={{
                         backgroundColor: '#fff',
@@ -78,19 +79,21 @@ function IsiDataAlumni() {
                         
                     />
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            sx={{
-                                backgroundColor: '#577399',
-                                textTransform: 'none',
-                                '&:hover': {
-                                    backgroundColor: '#4a6178',
-                                },
-                            }}
-                        >
-                            Lanjut
-                        </Button>
+                        <Link to='/survei'>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                sx={{
+                                    backgroundColor: '#577399',
+                                    textTransform: 'none',
+                                    '&:hover': {
+                                        backgroundColor: '#4a6178',
+                                    },
+                                }}
+                            >
+                                Lanjut
+                            </Button>
+                        </Link>
                     </Box>
                 </Box>
                 <Box
