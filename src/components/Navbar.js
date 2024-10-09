@@ -1,144 +1,81 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import Logo from '../assets/images/image.png'
+import Logo from '../assets/images/image.png';
+import { Routes, Route, Link } from 'react-router-dom';
+import DiagramSurvey from '../pages/Responden/DiagramSurvey';
 
 const pages = [
     { name: 'Home', path: '/' },
-    { name: 'Result', path: '/result' }
+    { name: 'Diagram', path: '/diagram' },
+    { name: 'Survey', path: '/survey' },
+    { name: 'Prodi', path: '/prodi' }
 ];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
-
     return (
-        <AppBar position="static">
-            <Container maxWidth="xl">
+        <AppBar position="static" sx={{ backgroundColor: '#577399', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}>
+            <Container maxWidth="">
                 <Toolbar disableGutters>
-                    <img src={Logo} alt="Logo" style={{ display: { xs: 'none', md: 'flex' }, marginRight: 8, height: 40 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                    </Typography>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
+                    {/* Logo dan Judul */}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box
+                            component="img"
+                            src={Logo}
+                            alt="Logo"
+                            sx={{ height: 50, width: 'auto', marginRight: 2 }}
+                        />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
+                            sx={{
+                                fontFamily: 'Nunito, sans-serif',
+                                fontWeight: 600,
+                                letterSpacing: '.05rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                                lineHeight: 1.2,
                             }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{ display: { xs: 'block', md: 'none' } }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                                    <Typography component={Link} to={page.path} sx={{ textAlign: 'center', color: 'inherit', textDecoration: 'none' }}>
-                                        {page.name}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                            Graduate Expected Proficiency<br />Level Survey
+                        </Typography>
                     </Box>
-                    <Box sx={{ flexGrow: 1, display: { justifyContent: 'center', xs: 'none', md: 'flex' } }}>
+
+                    {/* Menu Navigasi */}
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexGrow: 1 }}>
                         {pages.map((page) => (
                             <Button
                                 key={page.name}
                                 component={Link}
                                 to={page.path}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                sx={{
+                                    my: 2,
+                                    color: 'white',
+                                    display: 'block',
+                                    textTransform: 'none',
+                                    fontWeight: 500,
+                                    mx: 1,
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                        borderRadius: 1
+                                    }
+                                }}
                             >
                                 {page.name}
                             </Button>
                         ))}
-                        <Button variant="contained" color='inherit' sx={{ m: 2, color: 'primary.main'}}>Mulai Survei</Button>
                     </Box>
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
+                    {/* Routing */}
+                    <Routes>
+                        <Route path="/diagramSurvey" element={<DiagramSurvey />} />
+                        
+
+                    </Routes>
                 </Toolbar>
             </Container>
         </AppBar>
