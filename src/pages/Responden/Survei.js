@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Container } from '@mui/system';
 import CardHeader from '@mui/material/CardHeader';
@@ -11,29 +10,28 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
-
-const bull = (
-    <Box
-        component="span"
-        sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-        •
-    </Box>
-);
+import Grid from '@mui/material/Grid2';
+import { grey } from '@mui/material/colors';
 
 export default function Survei() {
+    const [selectedValue, setSelectedValue] = React.useState('b');
+
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+    };
+
     return (
         <Container
             maxWidth="xl"
             sx={{
                 display: 'flex',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                p: 3
             }}
         >
             <Box>
-                <Card sx={{ width: 1000, mt: 4, borderRadius: 3 }}>
+                <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
                     <CardHeader
                         sx={{ backgroundColor: '#577399' }}
                         titleTypographyProps={{ sx: { color: 'white', fontSize: '20px' } }}
@@ -76,10 +74,126 @@ export default function Survei() {
 
                 <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
                     <CardContent sx={{ px: 3 }}>
-                        <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16 }}>
+                        <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16, mb: 4 }}>
                             Choose one or two topics which students should develop relatively higher proficiency (+) and lower proficiency (-).
                         </Typography>
-                        <TextField fullWidth id="standard-basic" size="small" label="Your Answer" variant="standard" />
+                        <Box>
+                            <Grid container spacing={2} columns={36} fullWidth>
+                                <Grid size={12}>
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    - (lower)
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    0 (normal)
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    + (higher)
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
+                                <Grid size={12} sx={{display: 'flex', alignItems: 'center'}}>
+                                    <Typography sx={{ml: 1}}>
+                                        Test
+                                    </Typography>
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'a'}
+                                        onChange={handleChange}
+                                        value="a"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'A' }}
+                                    />
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'b'}
+                                        onChange={handleChange}
+                                        value="b"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'B' }}
+                                    />
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'c'}
+                                        onChange={handleChange}
+                                        value="c"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'C' }}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
+                                <Grid size={12} sx={{display: 'flex', alignItems: 'center'}}>
+                                    <Typography sx={{ml: 1}}>
+                                        Test
+                                    </Typography>
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'a'}
+                                        onChange={handleChange}
+                                        value="a"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'A' }}
+                                    />
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'b'}
+                                        onChange={handleChange}
+                                        value="b"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'B' }}
+                                    />
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'c'}
+                                        onChange={handleChange}
+                                        value="c"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'C' }}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
+                                <Grid size={12} sx={{display: 'flex', alignItems: 'center'}}>
+                                    <Typography sx={{ml: 1}}>
+                                        Test
+                                    </Typography>
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'a'}
+                                        onChange={handleChange}
+                                        value="a"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'A' }}
+                                    />
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'b'}
+                                        onChange={handleChange}
+                                        value="b"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'B' }}
+                                    />
+                                </Grid>
+                                <Grid size={8} textAlign={'center'}>
+                                    <Radio
+                                        checked={selectedValue === 'c'}
+                                        onChange={handleChange}
+                                        value="c"
+                                        name="radio-buttons"
+                                        inputProps={{ 'aria-label': 'C' }}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Box>
                     </CardContent>
                 </Card>
             </Box>
