@@ -7,7 +7,8 @@ import IsiDataAlumni from './pages/Responden/IsiDataAlumni';
 import IsiDataDosen from './pages/Responden/IsiDataDosen';
 import DiagramSurvey from './pages/Responden/DiagramSurvey';
 import LoginAdmin from './admin/LoginAdmin';
-import Survei from './pages/Responden/Survei'
+import Survei from './pages/Responden/Survei';
+import TerimakasihPage from './pages/Responden/TerimakasihPage';
 
 // Komponen utama aplikasi
 function App() {
@@ -47,6 +48,7 @@ function Main() {
         <Route path="/digramSurvey" element={<DiagramSurvey />} />
         <Route path="/loginAdmin" element={<LoginAdmin />} />
         <Route path="/survei" element={<Survei />} />
+        <Route path="/terimakasih" element={<TerimakasihPage />} />
       </Routes>
     </>
   );
