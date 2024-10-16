@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer'; 
 import LandingPage from './pages/Responden/LandingPage';
 import IsiDataIndustri from './pages/Responden/IsiDataIndustri';
 import IsiDataAlumni from './pages/Responden/IsiDataAlumni';
@@ -10,7 +11,6 @@ import LoginAdmin from './admin/LoginAdmin';
 import Survei from './pages/Responden/Survei';
 import TerimakasihPage from './pages/Responden/TerimakasihPage';
 
-// Komponen utama aplikasi
 function App() {
   return (
     <Router>
@@ -19,25 +19,20 @@ function App() {
   );
 }
 
-// Komponen untuk mengatur apakah Navbar akan muncul atau tidak
 function Main() {
   const location = useLocation();
-  
-  // Tentukan rute di mana navbar tidak akan muncul
+
   const hideNavbarRoutes = [
     '/dataAlumni',
     '/dataDosen',
     '/dataIndustri',
-    // '/digramSurvey',
     '/loginAdmin'
   ];
 
-  // Tentukan apakah navbar harus ditampilkan berdasarkan rute saat ini
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
 
   return (
     <>
-      {/* Tampilkan Navbar hanya jika rutenya tidak ada di dalam hideNavbarRoutes */}
       {shouldShowNavbar && <Navbar />}
 
       <Routes>
@@ -50,6 +45,8 @@ function Main() {
         <Route path="/survei" element={<Survei />} />
         <Route path="/terimakasih" element={<TerimakasihPage />} />
       </Routes>
+
+      <Footer /> 
     </>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent, IconButton } from '@mui/material';
-import Slider from 'react-slick'; // Import Slider
+import Slider from 'react-slick'; 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Routes, Route, Link } from 'react-router-dom';
@@ -8,7 +8,6 @@ import IsiDataAlumni from './IsiDataAlumni';
 import IsiDataDosen from './IsiDataDosen';
 import IsiDataIndustri from './IsiDataIndustri';
 
-// Impor gambar dengan jalur yang benar
 import lulusanImage from '../../assets/images/lulusan.png';
 import polibatamImage from '../../assets/images/polibatam.png';
 import alumniImage from '../../assets/images/alumni.png';
@@ -19,7 +18,6 @@ import industriImage from '../../assets/images/industri.png';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-// Komponen Anak Panah Kiri
 const PrevArrow = (props) => {
   const { onClick } = props;
   return (
@@ -29,7 +27,6 @@ const PrevArrow = (props) => {
   );
 };
 
-// Komponen Anak Panah Kanan
 const NextArrow = (props) => {
   const { onClick } = props;
   return (
@@ -40,7 +37,6 @@ const NextArrow = (props) => {
 };
 
 function LandingPages() {
-  // Pengaturan slider
   const settings = {
     dots: true,
     infinite: true,
@@ -55,8 +51,8 @@ function LandingPages() {
 
   return (
     <Box>
-      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 4 }}>
-        <Grid item xs={12} md={6} sx={{ marginTop: 2 }}>
+      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 1 }}>
+        <Grid item xs={12} md={6}>
           <Slider {...settings}>
             <Box>
               <img src={lulusanImage} alt="Lulusan" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
@@ -83,12 +79,11 @@ function LandingPages() {
         </Grid>
       </Container>
 
-      {/* Section Isi Survei */}
-      <Container maxWidth="lg" sx={{ textAlign: 'center', marginTop: 5 }}>
+      <Container maxWidth="lg" sx={{ textAlign: 'center', marginTop: 4 }}>
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           ISI SURVEY SEBAGAI
         </Typography>
-        <Grid container spacing={4} sx={{ marginTop: 2 }}>
+        <Grid container spacing={2} sx={{ marginTop: 1 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
               <Link to="/dataAlumni">
@@ -102,9 +97,9 @@ function LandingPages() {
                     height: 140,
                     cursor: 'pointer',
                     transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
+                    '&:hover': { opacity: 0.7 }, 
                   }}
-                  onClick={() => console.log('Navigating to Alumni page...')} // Tindakan saat gambar di-klik
+                  onClick={() => console.log('Navigating to Alumni page...')} 
                 />
               </Link>
               <CardContent>
@@ -127,9 +122,9 @@ function LandingPages() {
                     height: 140,
                     cursor: 'pointer',
                     transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
+                    '&:hover': { opacity: 0.7 }, 
                   }}
-                  onClick={() => console.log('Navigating to Dosen page...')} // Tindakan saat gambar di-klik
+                  onClick={() => console.log('Navigating to Dosen page...')} 
                 />
               </Link>
               <CardContent>
@@ -152,9 +147,9 @@ function LandingPages() {
                     height: 140,
                     cursor: 'pointer',
                     transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, // Mengubah opacity saat hover
+                    '&:hover': { opacity: 0.7 }, 
                   }}
-                  onClick={() => console.log('Navigating to Industri page...')} // Tindakan saat gambar di-klik
+                  onClick={() => console.log('Navigating to Industri page...')} 
                 />
               </Link>
               <CardContent>
@@ -167,28 +162,13 @@ function LandingPages() {
         </Grid>
       </Container>
 
-      {/* Footer */}
-      <Box
-        sx={{
-          marginTop: '20px',
-          padding: '30px',
-          backgroundColor: '#577399',
-          textAlign: 'center',
-          color: '#fff',
-          position: 'fixed',
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-      >
-        {/* Routing */}
+      
+      <Box>
         <Routes>
           <Route path="/dataAlumni" element={<IsiDataAlumni />} />
           <Route path="/dataDosen" element={<IsiDataDosen />} />
           <Route path="/dataIndustri" element={<IsiDataIndustri />} />
-
         </Routes>
-        <Typography variant="body2">@ 2024 - Level Survey</Typography>
       </Box>
     </Box>
   );

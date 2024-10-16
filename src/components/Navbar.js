@@ -36,7 +36,7 @@ function Navbar() {
             Diagram
           </Button>
           <Button color="inherit" component={Link} to="/loginadmin" sx={{ mx: 1 }}>
-            AdminSementara
+            Admin|Sementara
           </Button>
           <Button color="inherit" component={Link} to="/" sx={{ mx: 1 }}>
             Tentang
