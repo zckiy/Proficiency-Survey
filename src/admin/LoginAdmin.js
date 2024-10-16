@@ -67,6 +67,7 @@ function LoginAdmin() {
                         padding: '30px',
                         borderRadius: '15px',
                         boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
+                        height: '400px',
                         // transition: 'transform 0.3s',
                         // '&:hover': {
                         //     transform: 'scale(1.02)',
@@ -74,7 +75,7 @@ function LoginAdmin() {
                     }}
                 >
                     <Typography
-                        variant="h6"
+                        variant="h5"
                         align="center"
                         sx={{ fontFamily: 'Aboreto, sans-serif', color: '#fff', marginBottom: '25px' }}
                     >
@@ -141,7 +142,7 @@ function LoginAdmin() {
                                 }}
                             />
                         </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '35px' }}>
                             <Button
                                 type="submit"
                                 variant="contained"

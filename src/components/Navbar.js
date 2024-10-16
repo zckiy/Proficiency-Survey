@@ -2,14 +2,6 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Logo from '../assets/images/image.png';
-import DiagramSurvey from '../pages/Responden/DiagramSurvey';
-
-const pages = [
-    { name: 'Home', path: '/home' },
-    { name: 'Diagram', path: '/diagram' },
-    { name: 'Survey', path: '/survey' },
-    { name: 'Prodi', path: '/prodi' }
-];
 
 function Navbar() {
   return (
@@ -17,10 +9,22 @@ function Navbar() {
       <Toolbar>
         {/* Logo dan Judul di sisi kiri */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <img src={Logo} alt="Logo" style={{ height: '70px', marginLeft: '10px', marginRight: '10px', marginTop: '10px', marginBottom: '10px' }} />
-          <Typography variant="h6" sx={{ color: '#fff', marginLeft: '5px' }}>
-            Graduate Expected Proficiency <br/>Level Survey
-          </Typography>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <img 
+              src={Logo} 
+              alt="Logo" 
+              style={{ 
+                height: '70px', 
+                marginLeft: '10px', 
+                marginRight: '10px', 
+                marginTop: '10px', 
+                marginBottom: '10px' 
+              }} 
+            />
+            <Typography variant="h6" sx={{ color: '#fff', marginLeft: '5px' }}>
+              Graduate Expected Proficiency <br/>Level Survey
+            </Typography>
+          </Link>
         </Box>
 
         {/* Tombol Navigasi di sisi kanan */}
@@ -35,10 +39,7 @@ function Navbar() {
             AdminSementara
           </Button>
           <Button color="inherit" component={Link} to="/" sx={{ mx: 1 }}>
-            #
-          </Button>
-          <Button color="inherit" component={Link} to="/" sx={{ mx: 1 }}>
-            #
+            Tentang
           </Button>
         </Box>
       </Toolbar>
