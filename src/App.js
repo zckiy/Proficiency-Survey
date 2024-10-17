@@ -10,6 +10,7 @@ import DiagramSurvey from './pages/Responden/DiagramSurvey';
 import LoginAdmin from './admin/LoginAdmin';
 import Survei from './pages/Responden/Survei';
 import TerimakasihPage from './pages/Responden/TerimakasihPage';
+import Tentang from './pages/Responden/Tentang';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function Main() {
         <Route path="/loginAdmin" element={<LoginAdmin />} />
         <Route path="/survei" element={<Survei />} />
         <Route path="/terimakasih" element={<TerimakasihPage />} />
+        <Route path="/tentang/*" element={<Tentang />} />
       </Routes>
 
       <Footer /> 
