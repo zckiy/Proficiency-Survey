@@ -79,7 +79,7 @@ function IsiDataAlumni() {
                         
                     />
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-                        <Link to='/survei'>
+                        <Link to='/pilihProdi'>
                             <Button
                                 variant="contained"
                                 color="primary"

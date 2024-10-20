@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
+import { ThemeProvider, createTheme } from '@mui/material';
 import SelectionBox from './SelectionBox';
 import {
   Chart as ChartJS,
@@ -19,6 +20,14 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const theme = createTheme({
+  palette: {
+    background: {
+      default: '#dfe3ee', // Warna latar belakang halaman
+    },
+  },
+});
 
 const DiagramSurvey = () => {
   const [selectedProgram, setSelectedProgram] = React.useState('D3 Teknik Informatika');
@@ -110,12 +119,14 @@ const DiagramSurvey = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-      <div style={{ width: '90%', height: '670px' }}>
-        <Bar data={dataSets[selectedProgram]} options={options} />
-        <SelectionBox onProgramChange={handleProgramChange} />
+    <ThemeProvider theme={theme}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+        <div style={{ width: '90%', height: '670px' }}>
+          <Bar data={dataSets[selectedProgram]} options={options} />
+          <SelectionBox onProgramChange={handleProgramChange} />
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 };
 

@@ -11,6 +11,9 @@ import LoginAdmin from './admin/LoginAdmin';
 import Survei from './pages/Responden/Survei';
 import TerimakasihPage from './pages/Responden/TerimakasihPage';
 import Tentang from './pages/Responden/Tentang';
+import PilihProdi from './pages/Responden/PilihProdi';
+
+import DashboardAdmin from './admin/DashboardAdmin';
 
 function App() {
   return (
@@ -27,7 +30,10 @@ function Main() {
     '/dataAlumni',
     '/dataDosen',
     '/dataIndustri',
-    '/loginAdmin'
+    '/loginAdmin',
+    '/survei',
+    '/terimakasih',
+    '/pilihProdi'
   ];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
@@ -46,6 +52,9 @@ function Main() {
         <Route path="/survei" element={<Survei />} />
         <Route path="/terimakasih" element={<TerimakasihPage />} />
         <Route path="/tentang/*" element={<Tentang />} />
+        <Route path="/pilihProdi" element={<PilihProdi />} />
+
+        <Route path="/dashboardAdmin" element={<DashboardAdmin />} />
       </Routes>
 
       <Footer /> 

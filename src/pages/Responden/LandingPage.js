@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, IconButton } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent, IconButton, useTheme } from '@mui/material';
 import Slider from 'react-slick'; 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -37,6 +37,8 @@ const NextArrow = (props) => {
 };
 
 function LandingPages() {
+  const theme = useTheme();
+
   const settings = {
     dots: true,
     infinite: true,
@@ -50,7 +52,7 @@ function LandingPages() {
   };
 
   return (
-    <Box>
+    <Box sx={{ backgroundColor: theme.palette.background.default }}>
       <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 1 }}>
         <Grid item xs={12} md={6}>
           <Slider {...settings}>

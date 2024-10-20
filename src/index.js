@@ -9,7 +9,7 @@ import { CssBaseline } from '@mui/material';
 const theme = createTheme({
   palette: {
       background: {
-          default: '#E8F0FE', // Warna latar belakang halaman
+          default: '#dfe3ee', // Warna latar belakang halaman
       },
   },
 });
