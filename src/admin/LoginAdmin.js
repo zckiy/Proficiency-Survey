@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Box, Typography, TextField, Button, CssBaseline, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '../assets/images/image.png';
+import { useNavigate } from 'react-router-dom'; // Impor useNavigate untuk redirect
 
 // Buat tema dengan latar belakang khusus
 const theme = createTheme({
@@ -12,24 +13,22 @@ const theme = createTheme({
     },
 });
 
-function LoginAdmin() {
+function LoginAdmin({ onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate(); // Inisialisasi useNavigate
 
     const handleLogin = (e) => {
         e.preventDefault();
 
-        if (!username && !password) {
-            setError('Please fill in both Username and Password');
-        } else if (!username) {
-            setError('Please fill in the Username');
-        } else if (!password) {
-            setError('Please fill in the Password');
-        } else {
+        // Memeriksa username dan password
+        if (username === 'admin123' && password === 'admin123') {
             setError('');
-            // Lakukan proses login di sini
-            console.log('Logging in with', { username, password });
+            onLoginSuccess(); // Panggil fungsi setelah login berhasil
+            navigate('/dashboardAdmin'); // Arahkan ke halaman DashboardAdmin
+        } else {
+            setError('Invalid username or password');
         }
     };
 
@@ -68,10 +67,6 @@ function LoginAdmin() {
                         borderRadius: '15px',
                         boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
                         height: '400px',
-                        // transition: 'transform 0.3s',
-                        // '&:hover': {
-                        //     transform: 'scale(1.02)',
-                        // },
                     }}
                 >
                     <Typography
