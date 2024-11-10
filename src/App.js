@@ -30,12 +30,12 @@ function Main() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
 
   const hideNavbarRoutes = [
-    '/dataAlumni',
-    '/dataDosen',
-    '/dataIndustri',
+    // '/dataAlumni',
+    // '/dataDosen',
+    // '/dataIndustri',
     '/survei',
     '/terimakasih',
-    '/pilihProdi',
+    // '/pilihProdi',
     '/dashboardAdmin',
     '/loginAdmin',
     '/pilihProdiAdmin'

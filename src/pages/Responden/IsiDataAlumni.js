@@ -16,7 +16,7 @@ function IsiDataAlumni() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Container component="main" maxWidth="xs" sx={{ marginTop: '150px' }}>
+            <Container component="main" maxWidth="xs" sx={{ marginTop: '105px' }}>
                 <Box
                     sx={{
                         backgroundColor: '#fff',

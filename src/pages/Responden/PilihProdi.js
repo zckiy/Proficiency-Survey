@@ -23,7 +23,7 @@ const PilihProdi = () => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2 style={styles.title}>Pilih Jurusan Survei</h2>
+        <h2 style={styles.title}>Pilih Program Studi</h2>
         <div style={styles.dropdownContainer}>
           <select
             id="prodi"
@@ -31,20 +31,44 @@ const PilihProdi = () => {
             onChange={handleSelectChange}
             style={styles.dropdown}
           >
-            <option value="">Pilih Jurusan</option>
+            <option value="">-- Pilih Prodi --</option>
             <option value="Teknik Informatika">TEKNIK INFORMATIKA</option>
-            <option value="Teknik Elektro">TEKNIK ELEKTRO</option>
+            <option value="Teknik Geomatika">TEKNIK GEOMATIKA</option>
+            <option value="Animasi">ANIMASI</option>
+            <option value="Teknologi Rekayasa Multimedia">TEKNOLOGI REKAYASA MULTIMEDIA</option>
+            <option value="Rekayasa Keamanan Siber">REKAYASA KEAMANAN SIBER</option>
+            <option value="Rekayasa Perangkat Lunak">REKAYASA PERANGKAT LUNAK</option>
+            <option value="Teknik Komputer">TEKNIK KOMPUTER</option>
+            <option value="Teknologi Permainan">TEKNOLOGI PERMAINAN</option>
+
+            <option value="Teknik Elektronika Manufaktur">TEKNIK ELEKTRONIKA MANUFAKTUR</option>
+            <option value="Teknologi Rekayasa Elektronika">TEKNOLOGI REKAYASA ELEKTRONIKA</option>
+            <option value="Teknik Instrumentasi">TEKNIK INSTRUMENTASI</option>
+            <option value="Teknik Mekatronika">TEKNIK MEKATRONIKA</option>
+            <option value="Teknologi Rekayasa Pembangkit Energi">TEKNOLOGI REKAYASA PEMBANGKIT ENERGI</option>
+            <option value="Teknologi Rekayasa Robotika">TEKNOLOGI REKAYASA ROBOTIKA</option>
+
             <option value="Teknik Mesin">TEKNIK MESIN</option>
-            <option value="Manajemen & Bisnis">MANAJEMEN & BISNIS</option>
+            <option value="Teknik Perawatan Pesawat Udara">TEKNIK PERAWATAN PESAWAT UDARA</option>
+            <option value="Teknologi Rekayasa Konstruksi Perkapalan">TEKNOLOGI REKAYASA KONSTRUKSI PERKAPALAN</option>
+            <option value="Teknologi Rekayasa Pengelasan dan Fabrikasi">TEKNOLOGI REKAYASA PENGELASAN DAN FABRIKASI</option>
+            <option value="Program Profesi Insinyur">PROGRAM PROFESI INSINYUR</option>
+            <option value="Teknologi Rekayasa Metalurgi">TEKNOLOGI REKAYASA METALURGI</option>
+
+            <option value="Akuntansi">AKUNTANSI</option>
+            <option value="Akuntansi Manajerial">AKUNTANSI MANAJERIAL</option>
+            <option value="Administrasi Bisnis Terapan">ADMINISTRASI BISNIS TERAPAN</option>
+            <option value="Logistik Perdagangan Internasional">LOGISTIK PERDAGANGAN INTERNASIONAL</option>
+            <option value="Jalur Cepat Distribusi Barang">JALUR CEPAT DISTRIBUSI BARANG</option>
           </select>
         </div>
-        <button 
-            style={isHovered ? { ...styles.submitBtn, ...styles.submitBtnHover } : styles.submitBtn}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onClick={handleSubmit}
-            >
-          Lanjutkan Survey
+        <button
+          style={isHovered ? { ...styles.submitBtn, ...styles.submitBtnHover } : styles.submitBtn}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={handleSubmit}
+        >
+          Lanjut
         </button>
       </div>
     </div>
@@ -56,12 +80,12 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '90vh',
+    height: '75vh',
     fontFamily: 'Arial, sans-serif',
   },
   card: {
     background: '#fff',
-    padding: '30px 40px',
+    padding: '40px 90px',
     borderRadius: '15px',
     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
@@ -74,11 +98,11 @@ const styles = {
     color: '#333',
   },
   dropdownContainer: {
-    marginBottom: '20px',
+    marginBottom: '25px',
   },
   dropdown: {
     width: '100%',
-    padding: '12px',
+    padding: '15px',
     fontSize: '16px',
     border: '2px solid #4A90E2',
     borderRadius: '8px',
@@ -87,8 +111,8 @@ const styles = {
     outline: 'none',
   },
   submitBtn: {
-    padding: '12px 20px',
-    backgroundColor: '#4A90E2',
+    padding: '15px 38px',
+    backgroundColor: '#577399',
     color: 'white',
     border: 'none',
     borderRadius: '8px',
@@ -97,7 +121,7 @@ const styles = {
     transition: 'background-color 0.3s ease',
   },
   submitBtnHover: {
-    backgroundColor: '#357ABD',
+    backgroundColor: '#577399',
   },
 };
 
