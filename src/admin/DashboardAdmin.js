@@ -3,17 +3,18 @@ import { Box, Container, Typography, Grid, Card, CardContent, IconButton, useThe
 import Slider from 'react-slick'; 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Routes, Route, Link } from 'react-router-dom';
-import IsiDataAlumni from './IsiDataAlumni';
-import IsiDataDosen from './IsiDataDosen';
-import IsiDataIndustri from './IsiDataIndustri';
+import { Link } from 'react-router-dom';
+// import IsiDataAlumni from './IsiDataAlumni';
+// import IsiDataDosen from './IsiDataDosen';
+// import IsiDataIndustri from './IsiDataIndustri';
 
-import lulusanImage from '../../assets/images/lulusan.png';
-import polibatamImage from '../../assets/images/polibatam.png';
-import alumniImage from '../../assets/images/alumni.png';
-import graduateImage from '../../assets/images/graduate.png';
-import dosenImage from '../../assets/images/dosen.png';
-import industriImage from '../../assets/images/industri.png';
+import lulusanImage from '../assets/images/lulusan.png';
+import polibatamImage from '../assets/images/polibatam.png';
+import graduateImage from '../assets/images/graduate.png';
+
+import alumniImage from '../assets/images/alumni.png';
+import dosenImage from '../assets/images/dosen.png';
+import industriImage from '../assets/images/industri.png';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -36,7 +37,7 @@ const NextArrow = (props) => {
   );
 };
 
-function LandingPages() {
+function DashboardAdmin() {
   const theme = useTheme();
 
   const settings = {
@@ -53,7 +54,7 @@ function LandingPages() {
 
   return (
     <Box sx={{ backgroundColor: theme.palette.background.default }}>
-      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 15 }}>
+      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 1 }}>
         <Grid item xs={12} md={6}>
           <Slider {...settings}>
             <Box>
@@ -83,12 +84,12 @@ function LandingPages() {
 
       <Container maxWidth="lg" sx={{ textAlign: 'center', marginTop: 4 }}>
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          ISI SURVEY SEBAGAI
+          KELOLA SURVEY
         </Typography>
         <Grid container spacing={2} sx={{ marginTop: 1 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Link to="/dataAlumni">
+              <Link to="/pilihProdiAdmin">
                 <Box
                   component="img"
                   src={alumniImage}
@@ -113,7 +114,7 @@ function LandingPages() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Link to="/dataDosen">
+              <Link to="">
                 <Box
                   component="img"
                   src={dosenImage}
@@ -138,7 +139,7 @@ function LandingPages() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Link to="/dataIndustri">
+              <Link to="">
                 <Box
                   component="img"
                   src={industriImage}
@@ -163,16 +164,9 @@ function LandingPages() {
           </Grid>
         </Grid>
       </Container>
-      
-      <Box mb={20}>
-        <Routes>
-          <Route path="/dataAlumni" element={<IsiDataAlumni />} />
-          <Route path="/dataDosen" element={<IsiDataDosen />} />
-          <Route path="/dataIndustri" element={<IsiDataIndustri />} />
-        </Routes>
-      </Box>
+
     </Box>
   );
 }
 
-export default LandingPages;
+export default DashboardAdmin;

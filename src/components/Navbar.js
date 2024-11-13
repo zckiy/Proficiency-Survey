@@ -5,7 +5,7 @@ import Logo from '../assets/images/image.png';
 
 function Navbar() {
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#577399' }}>
+    <AppBar position="fixed" sx={{ backgroundColor: '#577399' }}>
       <Toolbar>
         {/* Logo dan Judul di sisi kiri */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -14,14 +14,14 @@ function Navbar() {
               src={Logo} 
               alt="Logo" 
               style={{ 
-                height: '70px', 
+                height: '65px', 
                 marginLeft: '10px', 
                 marginRight: '10px', 
-                marginTop: '10px', 
-                marginBottom: '10px' 
+                marginTop: '15px', 
+                marginBottom: '15px' 
               }} 
             />
-            <Typography variant="h6" sx={{ color: '#fff', marginLeft: '5px' }}>
+            <Typography variant="h6" sx={{ color: '#fff', marginLeft: '8px' }}>
               Graduate Expected Proficiency <br/>Level Survey
             </Typography>
           </Link>
