@@ -14,7 +14,7 @@ function Navbar() {
               src={Logo} 
               alt="Logo" 
               style={{ 
-                height: '65px', 
+                height: '50px', 
                 marginLeft: '10px', 
                 marginRight: '10px', 
                 marginTop: '15px', 

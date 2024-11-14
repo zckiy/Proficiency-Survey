@@ -10,7 +10,8 @@ import {
     RadioGroup,
     FormControlLabel,
     FormControl,
-    TextField
+    TextField,
+    Paper
 } from '@mui/material';
 import { Container } from '@mui/system';
 import CardHeader from '@mui/material/CardHeader';
@@ -20,6 +21,7 @@ import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid2';
 import { grey } from '@mui/material/colors';
 import { useParams } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Survei() { // Capitalized name
     // const navigate = useNavigate();
@@ -76,8 +78,26 @@ function Survei() { // Capitalized name
         fetchData();
     }, [prodiID]);
 
-    return (
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    fontFamily: 'Arial, sans-serif',
+                }}
+            >
+                <Box sx={{ display: 'flex' }}>
+                    <CircularProgress />
+                </Box>
 
+            </Box>
+        )
+    }
+
+    return (
         <Container
             maxWidth="xl"
             sx={{
@@ -89,16 +109,16 @@ function Survei() { // Capitalized name
                 display: 'flex',
                 justifyContent: 'center',
                 fontFamily: 'Arial, sans-serif',
-                marginTop: 15
+                marginTop: 8
             }}>
                 <Box>
                     {surveiList.map((surveiData) => (
                         <React.Fragment key={surveiData.surveiID}>
                             <Card sx={{ width: 1000, mt: 5, borderRadius: 3 }}>
                                 <CardHeader
-                                    sx={{ backgroundColor: '#5B99C2' }}
+                                    sx={{ backgroundColor: '#5B99C2', paddingY: 3, textAlign: 'center' }}
                                     titleTypographyProps={{ sx: { color: 'white', fontSize: '20px', fontWeight: 'bold' } }}
-                                    title={surveiData.kode + ". " + surveiData.judul}
+                                    title={surveiData.judul}
                                 />
                             </Card>
                             {pertanyaanList.filter(p => p.surveiID === surveiData.surveiID).map((pertanyaanData) => (
@@ -106,7 +126,7 @@ function Survei() { // Capitalized name
                                     <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
                                         <CardHeader
                                             sx={{ backgroundColor: '#577399' }}
-                                            titleTypographyProps={{ sx : { color: 'white', fontSize: 18 } }}
+                                            titleTypographyProps={{ sx: { color: 'white', fontSize: 18 } }}
                                             title={pertanyaanData.kodePertanyaan + ". " + pertanyaanData.pertanyaan}
                                         />
                                         <CardContent sx={{ px: 3 }}>
