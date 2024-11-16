@@ -1,74 +1,86 @@
-import * as React from 'react';
+import React, { useState, useEffect } from "react";
 import {
     Box,
     Card,
-    CardActions,
     CardContent,
     Typography,
     Button,
     Radio,
     RadioGroup,
     FormControlLabel,
-    FormControl,
     TextField,
-    Paper
-} from '@mui/material';
-import { Container } from '@mui/system';
-import CardHeader from '@mui/material/CardHeader';
-//import { useNavigate } from 'react-router-dom';
-import { pertanyaan, survei, pertanyaanDetail } from '../../api/SurveiAPI';
-import { useState, useEffect } from 'react';
-import Grid from '@mui/material/Grid2';
-import { grey } from '@mui/material/colors';
-import { useParams } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress';
+    CircularProgress,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from "@mui/material";
+import { grey } from "@mui/material/colors";
+import CardHeader from "@mui/material/CardHeader";
+import Grid from "@mui/material/Grid2";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { pertanyaan, survei, pertanyaanDetail, insertJawaban, insertJawabanDet } from "../../api/SurveiAPI";
 
-function Survei() { // Capitalized name
-    // const navigate = useNavigate();
+function Survei() {
+    const navigate = useNavigate();
+    const location = useLocation();
     const { prodiID } = useParams();
+
     const [surveiList, setSurvei] = useState([]);
     const [pertanyaanList, setPertanyaan] = useState([]);
     const [pertanyaanDetList, setPertanyaanDet] = useState([]);
+    const [formJawaban, setFormJawaban] = useState({});
+    const [formJawabanDet, setFormJawabanDet] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
-    const [selectedValue, setSelectedValue] = useState('b');
-
-    const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-    };
+    const { respondenID } = location.state || {};
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                console.log(respondenID);
                 const surveiData = await survei();
-                //console.log('Survei Data:', surveiData); // Debug log
                 setSurvei(surveiData);
 
                 const allPertanyaan = await Promise.all(
                     surveiData.map(async (surveiItem) => {
                         const pertanyaanData = await pertanyaan(surveiItem.surveiID, prodiID);
-                        //console.log(`Pertanyaan Data for Survei ${surveiItem.surveiID}:`, pertanyaanData); // Debug log
                         return { surveiID: surveiItem.surveiID, pertanyaan: pertanyaanData };
                     })
                 );
 
-                setPertanyaan(allPertanyaan.flatMap(item => item.pertanyaan));
+                setPertanyaan(allPertanyaan.flatMap((item) => item.pertanyaan));
+
+                const initialJawaban = {};
+                allPertanyaan.flatMap((item) => item.pertanyaan).forEach((pertanyaan) => {
+                    initialJawaban[pertanyaan.pertanyaanID] = { jawabanNUM: 0, jawabanSTR: "" };
+                });
+                setFormJawaban(initialJawaban);
 
                 const allPertanyaanDet = await Promise.all(
                     allPertanyaan.flatMap((item) =>
                         item.pertanyaan.map(async (pertanyaanItem) => {
-                            const pertanyaanDetData = await pertanyaanDetail(pertanyaanItem.pertanyaanID);
-                            //console.log(`Pertanyaan Detail for Pertanyaan ${pertanyaanItem.pertanyaanID}:`, pertanyaanDetData); // Debug log
-                            return { pertanyaanID: pertanyaanItem.pertanyaanID, detail: pertanyaanDetData };
+                            const detailData = await pertanyaanDetail(pertanyaanItem.pertanyaanID);
+                            return { pertanyaanID: pertanyaanItem.pertanyaanID, detail: detailData };
                         })
                     )
                 );
 
                 setPertanyaanDet(allPertanyaanDet);
 
+                const initialJawabanDet = {};
+                allPertanyaanDet.forEach((item) => {
+                    item.detail.forEach((det) => {
+                        initialJawabanDet[det.pertanyaanDetID] = { pertanyaanID: det.pertanyaanID, jawabanDet: 2 };
+                    });
+                });
+                setFormJawabanDet(initialJawabanDet);
             } catch (err) {
-                console.error('Error fetching data:', err); // Log error
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -78,163 +90,242 @@ function Survei() { // Capitalized name
         fetchData();
     }, [prodiID]);
 
+    const handleJawabanChange = (pertanyaanID, pertanyaanDetID, name, value) => {
+        if (name === "jawabanNUM" || name === "jawabanSTR") {
+            setFormJawaban((prev) => ({
+                ...prev,
+                [pertanyaanID]: {
+                    ...prev[pertanyaanID],
+                    [name]: name === "jawabanNUM" ? Number(value) : value,
+                },
+            }));
+        }
+
+        if (name === "jawabanDet") {
+            setFormJawabanDet((prev) => ({
+                ...prev,
+                [pertanyaanDetID]: {
+                    ...prev[pertanyaanDetID],
+                    pertanyaanID: Number(pertanyaanID),
+                    [name]: Number(value),
+                },
+            }));
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        setConfirmDialogOpen(false);
+        e.preventDefault();
+        try {
+            const jawaban = Object.entries(formJawaban).map(([pertanyaanID, answers]) => ({
+                respondenID: respondenID.respondenID,
+                pertanyaanID: Number(pertanyaanID),
+                jawabanNUM: answers.jawabanNUM ?? 0,
+                jawabanSTR: answers.jawabanSTR || "",
+            }));
+
+            const jawabanDet = Object.entries(formJawabanDet).map(([pertanyaanDetID, detail]) => ({
+                pertanyaanDetID: Number(pertanyaanDetID),
+                respondenID: Number(respondenID.respondenID),
+                jawabanDet: Number(detail.jawabanDet ?? 2),
+            }));
+
+            await insertJawaban(jawaban);
+            await insertJawabanDet(jawabanDet);
+
+            setSuccessDialogOpen(true);
+
+            navigate("/finish");
+        } catch (error) {
+            console.error(error);
+            alert("Terjadi kesalahan: " + error.message);
+        }
+    };
+
     if (loading) {
         return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    fontFamily: 'Arial, sans-serif',
-                }}
-            >
-                <Box sx={{ display: 'flex' }}>
-                    <CircularProgress />
-                </Box>
-
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
             </Box>
-        )
+        );
+    }
+
+    if (error) {
+        return <Typography color="error">{error}</Typography>;
     }
 
     return (
-        <Container
-            maxWidth="xl"
-            sx={{
-                display: 'flex',
-                justifyContent: 'center'
-            }}
-        >
+        <Container maxWidth="xl">
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 fontFamily: 'Arial, sans-serif',
                 marginTop: 8
             }}>
-                <Box>
+                <Box sx={{ width: 1000 }}>
                     {surveiList.map((surveiData) => (
-                        <React.Fragment key={surveiData.surveiID}>
-                            <Card sx={{ width: 1000, mt: 5, borderRadius: 3 }}>
+                        <Box key={surveiData.surveiID}>
+                            <Card sx={{ mt: 4, borderRadius: 2 }}>
                                 <CardHeader
-                                    sx={{ backgroundColor: '#5B99C2', paddingY: 3, textAlign: 'center' }}
-                                    titleTypographyProps={{ sx: { color: 'white', fontSize: '20px', fontWeight: 'bold' } }}
                                     title={surveiData.judul}
+                                    titleTypographyProps={{ variant: "h6", textAlign: "center" }}
+                                    sx={{ backgroundColor: "#5B99C2", color: "white" }}
                                 />
                             </Card>
-                            {pertanyaanList.filter(p => p.surveiID === surveiData.surveiID).map((pertanyaanData) => (
-                                <React.Fragment key={pertanyaanData.pertanyaanId}>
-                                    <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
-                                        <CardHeader
-                                            sx={{ backgroundColor: '#577399' }}
-                                            titleTypographyProps={{ sx: { color: 'white', fontSize: 18 } }}
-                                            title={pertanyaanData.kodePertanyaan + ". " + pertanyaanData.pertanyaan}
-                                        />
-                                        <CardContent sx={{ px: 3 }}>
-                                            <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 13, fontStyle: 'italic' }}>
-                                                Please rate the level of student skills required
-                                            </Typography>
-                                        </CardContent>
-                                        <CardActions sx={{ px: 3, pb: 3, display: 'flex', justifyContent: 'center' }}>
-                                            <FormControl>
-                                                <RadioGroup
+                            {pertanyaanList
+                                .filter((p) => p.surveiID === surveiData.surveiID)
+                                .map((pertanyaanData) => (
+                                    <Box key={pertanyaanData.pertanyaanID} sx={{ mt: 2 }}>
+                                        <Card sx={{ borderRadius: 2 }}>
+                                            <CardHeader
+                                                title={`${pertanyaanData.kodePertanyaan}. ${pertanyaanData.pertanyaan}`}
+                                                sx={{ backgroundColor: "#577399", color: "white" }}
+                                            />
+                                            <CardContent>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Please rate the level of student skills required.
+                                                </Typography>
+                                                <RadioGroup sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}
                                                     row
-                                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                                    name="row-radio-buttons-group"
+                                                    value={formJawaban[pertanyaanData.pertanyaanID]?.jawabanNUM || 0}
+                                                    onChange={(e) =>
+                                                        handleJawabanChange(pertanyaanData.pertanyaanID, null, "jawabanNUM", e.target.value)
+                                                    }
                                                 >
-                                                    <FormControlLabel value="0" control={<Radio />} label="0" labelPlacement="top" />
-                                                    <FormControlLabel value="1" control={<Radio />} label="1" labelPlacement="top" />
-                                                    <FormControlLabel value="2" control={<Radio />} label="2" labelPlacement="top" />
-                                                    <FormControlLabel value="3" control={<Radio />} label="3" labelPlacement="top" />
-                                                    <FormControlLabel value="4" control={<Radio />} label="4" labelPlacement="top" />
-                                                    <FormControlLabel value="5" control={<Radio />} label="5" labelPlacement="top" />
+                                                    {[0, 1, 2, 3, 4, 5].map((value) => (
+                                                        <FormControlLabel
+                                                            key={value}
+                                                            value={Number(value)}
+                                                            control={<Radio />}
+                                                            label={Number(value)}
+                                                            labelPlacement="top"
+                                                        />
+                                                    ))}
                                                 </RadioGroup>
-                                            </FormControl>
-                                        </CardActions>
-                                    </Card>
+                                            </CardContent>
+                                        </Card>
 
-                                    <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
-                                        <CardContent sx={{ px: 3 }}>
-                                            <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16 }}>
-                                                Optional : Add short explanation to your ratings
-                                            </Typography>
-                                            <TextField fullWidth id="standard-basic" size="small" label="Your Answer" variant="standard" />
-                                        </CardContent>
-                                    </Card>
+                                        <Card sx={{ mt: 2, borderRadius: 2 }}>
+                                            <CardContent>
+                                                <TextField
+                                                    fullWidth
+                                                    label="Optional: Add short explanation"
+                                                    variant="standard"
+                                                    value={formJawaban[pertanyaanData.pertanyaanID]?.jawabanSTR || ""}
+                                                    onChange={(e) =>
+                                                        handleJawabanChange(pertanyaanData.pertanyaanID, null, "jawabanSTR", e.target.value)
+                                                    }
+                                                />
+                                            </CardContent>
+                                        </Card>
 
-                                    <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
-                                        <CardContent sx={{ px: 3 }}>
-                                            <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16, mb: 4 }}>
-                                                Choose one or two topics which students should develop relatively higher proficiency (+) and lower proficiency (-).
-                                            </Typography>
-                                            <Box>
-                                                <Grid container spacing={2} columns={36} fullWidth>
-                                                    <Grid size={12}>
+                                        <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
+                                            <CardContent sx={{ px: 3 }}>
+                                                <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16, mb: 4 }}>
+                                                    Choose one or two topics which students should develop relatively higher proficiency (+) and lower proficiency (-).
+                                                </Typography>
+                                                <Box>
+                                                    <Grid container spacing={2} columns={36} fullWidth>
+                                                        <Grid size={12}>
+                                                        </Grid>
+                                                        <Grid size={8} textAlign={'center'}>
+                                                            - (lower)
+                                                        </Grid>
+                                                        <Grid size={8} textAlign={'center'}>
+                                                            0 (normal)
+                                                        </Grid>
+                                                        <Grid size={8} textAlign={'center'}>
+                                                            + (higher)
+                                                        </Grid>
                                                     </Grid>
-                                                    <Grid size={8} textAlign={'center'}>
-                                                        - (lower)
-                                                    </Grid>
-                                                    <Grid size={8} textAlign={'center'}>
-                                                        0 (normal)
-                                                    </Grid>
-                                                    <Grid size={8} textAlign={'center'}>
-                                                        + (higher)
-                                                    </Grid>
-                                                </Grid>
-                                                {(pertanyaanDetList
-                                                    .find(p => p.pertanyaanID === pertanyaanData.pertanyaanID)?.detail.map((pertanyaanDetData) => (
-                                                        <React.Fragment key={pertanyaanDetData.kodePertanyaanDetail}>
-                                                            <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
-                                                                <Grid size={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                                                    <Typography sx={{ ml: 1 }}>
-                                                                        {pertanyaanDetData.kodePertanyaanDetail} {pertanyaanDetData.pertanyaanDetail}
-                                                                    </Typography>
+                                                    {pertanyaanDetList
+                                                        .find((p) => p.pertanyaanID === pertanyaanData.pertanyaanID)
+                                                        ?.detail.map((pertanyaanDetData) => (
+                                                            <React.Fragment key={pertanyaanDetData.pertanyaanDetID}>
+                                                                <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
+                                                                    <Grid size={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                        <Typography sx={{ ml: 1 }}>
+                                                                            {pertanyaanDetData.kodePertanyaanDetail} {pertanyaanDetData.pertanyaanDetail}
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                    {[1, 2, 3].map((value) => (
+                                                                        <Grid size={8} textAlign={'center'} key={value}>
+                                                                            <Radio
+                                                                                value={value || 2}
+                                                                                checked={
+                                                                                    (formJawabanDet[pertanyaanDetData.pertanyaanDetID]?.jawabanDet ?? 2) === value
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    handleJawabanChange(
+                                                                                        pertanyaanData.pertanyaanID,
+                                                                                        pertanyaanDetData.pertanyaanDetID,
+                                                                                        "jawabanDet",
+                                                                                        e.target.value
+                                                                                    )
+                                                                                }
+                                                                                name={`pertanyaanDet-${pertanyaanDetData.pertanyaanDetID}`}
+                                                                                inputProps={{ 'aria-label': value }}
+                                                                            />
+                                                                        </Grid>
+                                                                    ))}
                                                                 </Grid>
-                                                                <Grid size={8} textAlign={'center'}>
-                                                                    <Radio
-                                                                        checked={selectedValue === 'a'}
-                                                                        onChange={handleChange}
-                                                                        value="a"
-                                                                        name="radio-buttons"
-                                                                        inputProps={{ 'aria-label': 'A' }}
-                                                                    />
-                                                                </Grid>
-                                                                <Grid size={8} textAlign={'center'}>
-                                                                    <Radio
-                                                                        checked={selectedValue === 'b'}
-                                                                        onChange={handleChange}
-                                                                        value="b"
-                                                                        name="radio-buttons"
-                                                                        inputProps={{ 'aria-label': 'B' }}
-                                                                    />
-                                                                </Grid>
-                                                                <Grid size={8} textAlign={'center'}>
-                                                                    <Radio
-                                                                        checked={selectedValue === 'c'}
-                                                                        onChange={handleChange}
-                                                                        value="c"
-                                                                        name="radio-buttons"
-                                                                        inputProps={{ 'aria-label': 'C' }}
-                                                                    />
-                                                                </Grid>
-                                                            </Grid>
-                                                        </React.Fragment>
-                                                    )))}
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                </React.Fragment>
-                            ))}
-                        </React.Fragment>
+                                                            </React.Fragment>
+                                                        ))}
+                                                </Box>
+                                            </CardContent>
+                                        </Card>
+                                    </Box>
+                                ))}
+                        </Box>
                     ))}
-                    <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
-                        <CardActions sx={{ px: 3, pb: 3, display: 'flex', justifyContent: 'center' }}>
-                            <Button variant="contained" color="primary">
-                                Submit
-                            </Button>
-                        </CardActions>
-                    </Card>
+                    <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+                        <Button type="submit" variant="contained" onClick={() => setConfirmDialogOpen(true)}>
+                            Submit
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
+
+            <Dialog
+                open={confirmDialogOpen}
+                onClose={() => setConfirmDialogOpen(false)}
+                aria-labelledby="confirm-dialog-title"
+                aria-describedby="confirm-dialog-description"
+            >
+                <DialogTitle id="confirm-dialog-title">Konfirmasi</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="confirm-dialog-description">
+                        Apakah Anda yakin ingin menyimpan jawaban?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmDialogOpen(false)} color="secondary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary" autoFocus>
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={successDialogOpen}
+                onClose={() => setSuccessDialogOpen(false)}
+                aria-labelledby="success-dialog-title"
+                aria-describedby="success-dialog-description"
+            >
+                <DialogTitle id="success-dialog-title">{"Berhasil"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="success-dialog-description">
+                        Jawaban berhasil disimpan!
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setSuccessDialogOpen(false)} autoFocus>
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 }

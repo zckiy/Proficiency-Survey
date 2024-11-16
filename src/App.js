@@ -8,8 +8,7 @@ import IsiDataAlumni from './pages/Responden/IsiDataAlumni';
 import IsiDataDosen from './pages/Responden/IsiDataDosen';
 import DiagramSurvey from './pages/Responden/DiagramSurvey';
 import Survei from './pages/Responden/Survei';
-import TerimakasihPage from './pages/Responden/TerimakasihPage';
-import Tentang from './pages/Responden/Tentang';
+import FinishPage from './pages/Responden/FinishPage';
 import PilihProdi from './pages/Responden/PilihProdi';
 
 import NavbarAdmin from './components/NavbarAdmin';
@@ -27,26 +26,27 @@ function App() {
 
 function Main() {
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const hideNavbarRoutes = [
     '/survei',
-    '/terimakasih',
+    '/finish',
     '/dashboardAdmin',
     '/loginAdmin',
     '/pilihProdiAdmin'
   ];
 
   const hideFooterRoutes = [
-    '/dataIndustri',
-    '/dataDosen',
-    '/dataAlumni',
+    '/industri',
+    '/dosen',
+    '/alumni',
     '/survei',
-    '/terimakasih',
+    '/finish',
     '/dashboardAdmin',
     '/loginAdmin',
     '/pilihProdiAdmin',
-    '/survei/:prodiID'
+    '/survei/:prodiID',
+    '/prodi'
   ];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
@@ -56,11 +56,11 @@ function Main() {
   const isDashboardAdmin = location.pathname === '/dashboardAdmin';
 
   const handleLoginSuccess = () => {
-    setIsLoggedIn(true); // Set status login ke true
+    setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false); // Set status login ke false
+    setIsLoggedIn(false);
   };
 
   return (
@@ -70,14 +70,13 @@ function Main() {
 
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/dataIndustri" element={<IsiDataIndustri />} />
-        <Route path="/dataAlumni" element={<IsiDataAlumni />} />
-        <Route path="/dataDosen" element={<IsiDataDosen />} />
-        <Route path="/digramSurvey" element={<DiagramSurvey />} />
+        <Route path="/industri" element={<IsiDataIndustri />} />
+        <Route path="/alumni" element={<IsiDataAlumni />} />
+        <Route path="/dosen" element={<IsiDataDosen />} />
+        <Route path="/diagram" element={<DiagramSurvey />} />
         <Route path="/survei/:prodiID" element={<Survei />} />
-        <Route path="/terimakasih" element={<TerimakasihPage />} />
-        <Route path="/tentang/*" element={<Tentang />} />
-        <Route path="/pilihProdi" element={<PilihProdi />} />
+        <Route path="/finish" element={<FinishPage />} />
+        <Route path="/prodi" element={<PilihProdi />} />
 
         <Route
           path="/loginAdmin"

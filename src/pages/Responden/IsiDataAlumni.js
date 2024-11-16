@@ -1,5 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography, TextField, Button, CssBaseline, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import {
+    Container,
+    Box,
+    Typography,
+    TextField,
+    Button,
+    CssBaseline,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { insertResponden } from '../../api/RespondenAPI';
@@ -9,13 +25,14 @@ import { prodi } from '../../api/SurveiAPI';
 const theme = createTheme({
     palette: {
         background: {
-            default: '#E8F0FE', // Background color
+            default: '#E8F0FE',
         },
     },
 });
 
 function IsiDataAlumni() {
     const [prodiData, setProdiData] = useState([]);
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [formData, setFormData] = useState({
         nama: "",
         email: "",
@@ -34,15 +51,15 @@ function IsiDataAlumni() {
     };
 
     const handleSubmit = async (e) => {
+        setConfirmDialogOpen(false);
         e.preventDefault();
         try {
             const tipeRes = calculateTipeRes(Number(formData.tahunLulusan));
             const requestData = { ...formData, tipeRes };
 
-            const data = await insertResponden(requestData);
-            console.log(data);
-            alert("Data berhasil disimpan!");
-            navigate("/pilihProdi", { state: { respondenID: data.respondenID } });
+            const respondenID = await insertResponden(requestData);
+            console.log(respondenID);
+            navigate("/prodi", { state: { respondenID: respondenID } });
         } catch (error) {
             console.error(error);
             alert("Terjadi kesalahan: " + error.message);
@@ -81,8 +98,6 @@ function IsiDataAlumni() {
                     }}
                 >
                     <Box
-                        component="form"
-                        onSubmit={handleSubmit}
                         sx={{
                             backgroundColor: '#fff',
                             padding: '30px',
@@ -168,12 +183,35 @@ function IsiDataAlumni() {
                                         backgroundColor: '#4a6178',
                                     },
                                 }}
+                                onClick={() => setConfirmDialogOpen(true)}
                             >
                                 Submit
                             </Button>
                         </Box>
                     </Box>
                 </Box>
+
+                <Dialog
+                    open={confirmDialogOpen}
+                    onClose={() => setConfirmDialogOpen(false)}
+                    aria-labelledby="confirm-dialog-title"
+                    aria-describedby="confirm-dialog-description"
+                >
+                    <DialogTitle id="confirm-dialog-title">Konfirmasi</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="confirm-dialog-description">
+                            Apakah Anda yakin ingin menyimpan jawaban?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setConfirmDialogOpen(false)} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSubmit} color="primary" autoFocus>
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Container>
         </ThemeProvider>
     );

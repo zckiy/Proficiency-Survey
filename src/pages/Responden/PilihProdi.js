@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { prodi } from '../../api/SurveiAPI';
 import { Box, Typography, Select, MenuItem, Button, FormControl, InputLabel } from '@mui/material';
 
 const PilihProdi = () => {
   const [selectedProdi, setSelectedProdi] = useState('');
   const [prodiData, setProdiData] = useState([]);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const { respondenID } = location.state || {};
 
   const handleSelectChange = (event) => {
     setSelectedProdi(event.target.value);
@@ -14,7 +17,11 @@ const PilihProdi = () => {
 
   const handleSubmit = () => {
     if (selectedProdi) {
-      navigate(`/survei/${selectedProdi}`);
+      if (respondenID) {
+        navigate(`/survei/${selectedProdi}`, { state: { respondenID } });
+      } else {
+        alert('respondenID tidak ditemukan!');
+      }
     } else {
       alert('Silakan pilih jurusan terlebih dahulu!');
     }
@@ -25,11 +32,12 @@ const PilihProdi = () => {
       try {
         const data = await prodi();
         setProdiData(data);
+        console.log('respondenID:', respondenID)
       } catch (error) {
         console.error('Error fetching prodi data:', error);
       }
     };
-
+    
     fetchData();
   }, []);
 

@@ -88,7 +88,7 @@ function LandingPages() {
         <Grid container spacing={2} sx={{ marginTop: 1 }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Link to="/dataAlumni">
+              <Link to="/alumni">
                 <Box
                   component="img"
                   src={alumniImage}
@@ -113,7 +113,7 @@ function LandingPages() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Link to="/dataDosen">
+              <Link to="/dosen">
                 <Box
                   component="img"
                   src={dosenImage}
@@ -138,7 +138,7 @@ function LandingPages() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Card sx={{ maxWidth: 345 }}>
-              <Link to="/dataIndustri">
+              <Link to="/industri">
                 <Box
                   component="img"
                   src={industriImage}
@@ -166,9 +166,9 @@ function LandingPages() {
       
       <Box mb={20}>
         <Routes>
-          <Route path="/dataAlumni" element={<IsiDataAlumni />} />
-          <Route path="/dataDosen" element={<IsiDataDosen />} />
-          <Route path="/dataIndustri" element={<IsiDataIndustri />} />
+          <Route path="/alumni" element={<IsiDataAlumni />} />
+          <Route path="/dosen" element={<IsiDataDosen />} />
+          <Route path="/industri" element={<IsiDataIndustri />} />
         </Routes>
       </Box>
     </Box>

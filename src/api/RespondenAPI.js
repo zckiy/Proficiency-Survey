@@ -9,4 +9,4 @@ export const insertResponden = async (data) => {
     } catch (error) {
         throw new Error(error.message);
     }
-};  
+};

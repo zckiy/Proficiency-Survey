@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
 import { Link } from 'react-router-dom'; 
 
-export default function TerimakasihPage() {
+export default function FinishPage() {
     return (
         <Container
             maxWidth="md"
