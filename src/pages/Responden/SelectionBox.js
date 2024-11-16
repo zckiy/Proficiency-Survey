@@ -14,10 +14,10 @@ const SelectionBox = ({ onProgramChange }) => {
     <Box
       sx={{
         position: 'absolute',
-        top: '90px',
-        right: '110px',
-        padding: '20px',
-        zIndex: 1000, 
+        top: '77px',
+        right: '20px',
+        padding: '15px',
+        zIndex: 1000  , 
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -26,7 +26,7 @@ const SelectionBox = ({ onProgramChange }) => {
       <Grid container alignItems="center" spacing={1}>
         <Grid item xs={12}>
           <FormControl fullWidth variant="outlined" margin="normal">
-            <InputLabel id="select-program-label" shrink sx={{fontWeight: 'Bold'}}>
+            <InputLabel id="select-program-label" shrink>
               Pilih Program Studi
             </InputLabel>
             <Select
@@ -35,7 +35,7 @@ const SelectionBox = ({ onProgramChange }) => {
               value={selectedOption}
               onChange={handleChange}
               displayEmpty
-              sx={{ width: '220px' }}
+              sx={{ width: '200px', height: '45px' }}
             >
               <MenuItem value="" disabled>
                 -- Pilih --

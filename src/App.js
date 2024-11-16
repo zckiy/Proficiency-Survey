@@ -46,7 +46,8 @@ function Main() {
     '/loginAdmin',
     '/pilihProdiAdmin',
     '/survei/:prodiID',
-    '/prodi'
+    '/prodi',
+    '/diagram'
   ];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);

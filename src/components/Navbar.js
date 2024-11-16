@@ -21,22 +21,19 @@ function Navbar() {
                 marginBottom: '15px' 
               }} 
             />
-            <Typography variant="h6" sx={{ color: '#fff', marginLeft: '8px' }}>
+            <Typography variant="h7" sx={{ color: '#fff', marginLeft: '8px' }}>
               Graduate Expected Proficiency <br/>Level Survey
             </Typography>
           </Link>
         </Box>
 
         {/* Tombol Navigasi di sisi kanan */}
-        <Box sx={{ ml: 'auto' }}>
+        <Box sx={{ ml: 'auto', mr: '5px' }}>
           <Button color="inherit" component={Link} to="/" sx={{ mx: 1 }}>
             Home
           </Button>
-          <Button color="inherit" component={Link} to="/digramSurvey" sx={{ mx: 1 }}>
+          <Button color="inherit" component={Link} to="/diagram" sx={{ mx: 1 }}>
             Diagram
-          </Button>
-          <Button color="inherit" component={Link} to="/tentang" sx={{ mx: 1 }}>
-            Tentang
           </Button>
         </Box>
       </Toolbar>

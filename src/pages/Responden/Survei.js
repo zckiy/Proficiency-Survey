@@ -278,7 +278,7 @@ function Survei() {
                                 ))}
                         </Box>
                     ))}
-                    <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+                    <Box sx={{ mt: 4, mb:4, display: "flex", justifyContent: "center" }}>
                         <Button type="submit" variant="contained" onClick={() => setConfirmDialogOpen(true)}>
                             Submit
                         </Button>

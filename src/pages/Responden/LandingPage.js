@@ -53,7 +53,7 @@ function LandingPages() {
 
   return (
     <Box sx={{ backgroundColor: theme.palette.background.default }}>
-      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 15 }}>
+      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 11 }}>
         <Grid item xs={12} md={6}>
           <Slider {...settings}>
             <Box>

@@ -120,8 +120,8 @@ const DiagramSurvey = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-        <div style={{ width: '90%', height: '670px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '130px' }}>
+        <div style={{ width: '80%', height: '500px' }}>
           <Bar data={dataSets[selectedProgram]} options={options} />
           <SelectionBox onProgramChange={handleProgramChange} />
         </div>

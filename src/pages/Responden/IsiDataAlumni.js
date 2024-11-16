@@ -99,6 +99,7 @@ function IsiDataAlumni() {
                 >
                     <Box
                         sx={{
+                            marginTop: '60px',
                             backgroundColor: '#fff',
                             padding: '30px',
                             borderRadius: '10px',
