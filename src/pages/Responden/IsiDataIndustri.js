@@ -81,7 +81,6 @@ function IsiDataIndustri() {
         fetchData();
     }, []);
 
-
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -135,35 +134,42 @@ function IsiDataIndustri() {
                             margin="normal"
                             InputLabelProps={{ shrink: true }}
                         />
-                        <Grid container alignItems="center" spacing={1}>
-                            <Grid item xs={12}>
-                                <FormControl fullWidth sx={{ marginTop: 2 }}>
-                                    <InputLabel id="prodi-label" shrink>Program Studi</InputLabel>
-                                    <Select
-                                        labelId="prodi-label"
-                                        id="prodi"
-                                        name="prodiID"
-                                        value={formData.prodiID}
-                                        onChange={(e) =>
-                                            setFormData((prevData) => ({
-                                                ...prevData,
-                                                prodiID: e.target.value,
-                                            }))
-                                        }
-                                        label="Pilih Prodi"
-                                    >
-                                        <MenuItem value="" disabled>
-                                            -- Pilih --
-                                        </MenuItem>
-                                        {prodiData.map((prodi) => (
-                                            <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
-                                                {prodi.namaProdi}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        </Grid>
+
+                        <FormControl fullWidth sx={{ marginTop: 2 }}>
+                            <InputLabel
+                                id="prodi-label"
+                                shrink
+                                sx={{
+                                    backgroundColor: '#fff', // Tambahkan background putih agar label tidak tertutup garis
+                                    padding: '0 4px', // Beri padding di sekitar label agar terlihat rapi
+                                    marginLeft: '-4px', // Sesuaikan posisi label agar tetap sejajar dengan kotak
+                                }}
+                            >
+                                Program Studi
+                            </InputLabel>
+                            <Select
+                                labelId="prodi-label"
+                                id="prodi"
+                                name="prodiID"
+                                value={formData.prodiID}
+                                onChange={(e) =>
+                                    setFormData((prevData) => ({
+                                        ...prevData,
+                                        prodiID: e.target.value,
+                                    }))
+                                }
+                                label="Pilih Prodi"
+                            >
+                                <MenuItem value="" disabled>
+                                    -- Pilih --
+                                </MenuItem>
+                                {prodiData.map((prodi) => (
+                                    <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
+                                        {prodi.namaProdi}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
                             <Button

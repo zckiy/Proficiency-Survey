@@ -135,7 +135,17 @@ function IsiDataDosen() {
                             InputLabelProps={{ shrink: true }}
                         />
                         <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <InputLabel id="prodi-label">Program Studi</InputLabel>
+                            <InputLabel 
+                                id="prodi-label"
+                                shrink
+                                sx={{
+                                    backgroundColor: '#fff', // Tambahkan background putih agar label tidak tertutup garis
+                                    padding: '0 4px', // Beri padding di sekitar label agar terlihat rapi
+                                    marginLeft: '-4px', // Sesuaikan posisi label agar tetap sejajar dengan kotak
+                                }}
+                                >
+                                Program Studi
+                            </InputLabel>
                             <Select
                                 labelId="prodi-label"
                                 id="prodi"
