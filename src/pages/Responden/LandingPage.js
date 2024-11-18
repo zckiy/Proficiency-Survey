@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent, IconButton, useTheme } from '@mui/material';
-import Slider from 'react-slick'; 
+import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Routes, Route, Link } from 'react-router-dom';
@@ -73,8 +73,8 @@ function LandingPages() {
                 Graduate Expected Proficiency Level Survey
               </Typography>
               <Typography variant="body1" sx={{ marginTop: 2 }}>
-                Untuk mengetahui tingkat profisiensi lulusan yang dapat dijadikan evaluasi dalam sistem pendidikan.
-                Aplikasi ini membantu memantau lulusan, serta dosen, alumni junior, alumni senior, dan industri.
+                Tujuan survei ini adalah untuk memahami harapan dan tingkat kemahiran yang diinginkan dari para lulusan dalam berbagai bidang kompetensi. 
+                Informasi yang Anda berikan akan sangat berharga bagi kami dalam meningkatkan kualitas pendidikan dan persiapan karier lulusan.
               </Typography>
             </CardContent>
           </Card>
@@ -99,9 +99,9 @@ function LandingPages() {
                     height: 140,
                     cursor: 'pointer',
                     transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, 
+                    '&:hover': { opacity: 0.7 },
                   }}
-                  onClick={() => console.log('Navigating to Alumni page...')} 
+                  onClick={() => console.log('Navigating to Alumni page...')}
                 />
               </Link>
               <CardContent>
@@ -124,9 +124,9 @@ function LandingPages() {
                     height: 140,
                     cursor: 'pointer',
                     transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, 
+                    '&:hover': { opacity: 0.7 },
                   }}
-                  onClick={() => console.log('Navigating to Dosen page...')} 
+                  onClick={() => console.log('Navigating to Dosen page...')}
                 />
               </Link>
               <CardContent>
@@ -149,9 +149,9 @@ function LandingPages() {
                     height: 140,
                     cursor: 'pointer',
                     transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, 
+                    '&:hover': { opacity: 0.7 },
                   }}
-                  onClick={() => console.log('Navigating to Industri page...')} 
+                  onClick={() => console.log('Navigating to Industri page...')}
                 />
               </Link>
               <CardContent>
@@ -163,7 +163,7 @@ function LandingPages() {
           </Grid>
         </Grid>
       </Container>
-      
+
       <Box mb={20}>
         <Routes>
           <Route path="/alumni" element={<IsiDataAlumni />} />

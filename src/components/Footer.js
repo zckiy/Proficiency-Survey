@@ -10,7 +10,6 @@ const Footer = () => {
         backgroundColor: '#577399',
         textAlign: 'center',
         color: '#fff',
-        position: 'fixed',
         left: 0,
         right: 0,
         bottom: 0,
