@@ -33,7 +33,7 @@ function Navbar() {
             Home
           </Button>
           <Button color="inherit" component={Link} to="/diagram" sx={{ mx: 1 }}>
-            Diagram
+            RESULT
           </Button>
         </Box>
       </Toolbar>
