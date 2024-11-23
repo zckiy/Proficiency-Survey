@@ -14,8 +14,7 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,
-    Grid,
+    DialogTitle
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -55,9 +54,9 @@ function IsiDataIndustri() {
         e.preventDefault();  // Prevent the default form submission behavior
         setConfirmDialogOpen(false);
         try {
-            const tipeRes = 4;
+            const tipeResID = 4;
             const tahunLulusan = null;
-            const requestData = { ...formData, tipeRes, tahunLulusan };
+            const requestData = { ...formData, tipeResID, tahunLulusan };
 
             const respondenID = await insertResponden(requestData);
             console.log(respondenID);

@@ -54,9 +54,9 @@ function IsiDataDosen() {
         setConfirmDialogOpen(false);
         e.preventDefault();
         try {
-            const tipeRes = 3;
+            const tipeResID = 3;
             const tahunLulusan = null;
-            const requestData = { ...formData, tipeRes, tahunLulusan };
+            const requestData = { ...formData, tipeResID, tahunLulusan };
 
             const respondenID = await insertResponden(requestData);
             console.log(respondenID);

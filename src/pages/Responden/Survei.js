@@ -119,6 +119,7 @@ function Survei() {
         try {
             const jawaban = Object.entries(formJawaban).map(([pertanyaanID, answers]) => ({
                 respondenID: respondenID.respondenID,
+                prodiID: prodiID,
                 pertanyaanID: Number(pertanyaanID),
                 jawabanNUM: answers.jawabanNUM ?? 0,
                 jawabanSTR: answers.jawabanSTR || "",
@@ -126,6 +127,7 @@ function Survei() {
 
             const jawabanDet = Object.entries(formJawabanDet).map(([pertanyaanDetID, detail]) => ({
                 pertanyaanDetID: Number(pertanyaanDetID),
+                prodiID: prodiID,
                 respondenID: Number(respondenID.respondenID),
                 jawabanDet: Number(detail.jawabanDet ?? 2),
             }));

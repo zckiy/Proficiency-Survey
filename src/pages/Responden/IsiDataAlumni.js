@@ -54,8 +54,8 @@ function IsiDataAlumni() {
         setConfirmDialogOpen(false);
         e.preventDefault();
         try {
-            const tipeRes = calculateTipeRes(Number(formData.tahunLulusan));
-            const requestData = { ...formData, tipeRes };
+            const tipeResID = calculateTipeRes(Number(formData.tahunLulusan));
+            const requestData = { ...formData, tipeResID };
 
             const respondenID = await insertResponden(requestData);
             console.log(respondenID);
@@ -81,7 +81,7 @@ function IsiDataAlumni() {
 
     const calculateTipeRes = (tahunLulusan) => {
         const currentYear = new Date().getFullYear();
-        return currentYear - tahunLulusan < 5 ? 1 : 2;
+        return currentYear - tahunLulusan <= 4 ? 1 : 2;
     };
 
     return (
