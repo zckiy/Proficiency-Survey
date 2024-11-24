@@ -32,12 +32,15 @@ const theme = createTheme({
 
 function IsiDataDosen() {
     const [prodiData, setProdiData] = useState([]);
+    const [jurusanData, setJurusanData] = useState([]);
+    const [filteredProdi, setFilteredProdi] = useState([]);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [formData, setFormData] = useState({
         nama: "",
         email: "",
         tahunLulusan: "",
         prodiID: "",
+        jurusanID: "",
     });
 
     const navigate = useNavigate();
@@ -54,7 +57,7 @@ function IsiDataDosen() {
         setConfirmDialogOpen(false);
         e.preventDefault();
         try {
-            const tipeResID = 3;
+            const tipeResID = 4;
             const tahunLulusan = null;
             const requestData = { ...formData, tipeResID, tahunLulusan };
 
@@ -72,6 +75,16 @@ function IsiDataDosen() {
             try {
                 const data = await prodi();
                 setProdiData(data);
+                const uniqueJurusan = [
+                    ...new Map(
+                        data.map((item) => [item.jurusanID, item.namaJurusan])
+                    ),
+                ].map(([jurusanID, namaJurusan]) => ({
+                    jurusanID,
+                    namaJurusan,
+                }));
+
+                setJurusanData(uniqueJurusan);
             } catch (error) {
                 console.error('Error fetching prodi data:', error);
             }
@@ -80,6 +93,17 @@ function IsiDataDosen() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        // Filter prodi berdasarkan jurusan yang dipilih
+        if (formData.jurusanID) {
+            const filtered = prodiData.filter(
+                (item) => item.jurusanID === parseInt(formData.jurusanID)
+            );
+            setFilteredProdi(filtered);
+        } else {
+            setFilteredProdi([]);
+        }
+    }, [formData.jurusanID, prodiData]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -135,15 +159,42 @@ function IsiDataDosen() {
                             InputLabelProps={{ shrink: true }}
                         />
                         <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <InputLabel 
+                            <InputLabel
+                                id="jurusan-label"
+                                shrink
+                                sx={{
+                                    backgroundColor: '#fff', 
+                                    padding: '0 4px', 
+                                    marginLeft: '-4px', 
+                                }}
+                            >
+                                Jurusan
+                            </InputLabel>
+                            <Select
+                                labelId="jurusan-label"
+                                id="jurusan"
+                                name="jurusanID"
+                                value={formData.jurusanID}
+                                onChange={handleChange}
+                                label=""
+                            >
+                                {jurusanData.map((jurusan) => (
+                                    <MenuItem key={jurusan.jurusanID} value={jurusan.jurusanID}>
+                                        {jurusan.namaJurusan}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ marginTop: 2 }}>
+                            <InputLabel
                                 id="prodi-label"
                                 shrink
                                 sx={{
-                                    backgroundColor: '#fff', // Tambahkan background putih agar label tidak tertutup garis
-                                    padding: '0 4px', // Beri padding di sekitar label agar terlihat rapi
-                                    marginLeft: '-4px', // Sesuaikan posisi label agar tetap sejajar dengan kotak
+                                    backgroundColor: '#fff',
+                                    padding: '0 4px', 
+                                    marginLeft: '-4px', 
                                 }}
-                                >
+                            >
                                 Program Studi
                             </InputLabel>
                             <Select
@@ -151,15 +202,11 @@ function IsiDataDosen() {
                                 id="prodi"
                                 name="prodiID"
                                 value={formData.prodiID}
-                                onChange={(e) =>
-                                    setFormData((prevData) => ({
-                                        ...prevData,
-                                        prodiID: e.target.value,
-                                    }))
-                                }
+                                onChange={handleChange}
+                                disabled={!formData.jurusanID}
                                 label="Pilih Prodi"
                             >
-                                {prodiData.map((prodi) => (
+                                {filteredProdi.map((prodi) => (
                                     <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
                                         {prodi.namaProdi}
                                     </MenuItem>
