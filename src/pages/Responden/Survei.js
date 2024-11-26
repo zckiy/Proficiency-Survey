@@ -164,7 +164,7 @@ function Survei() {
                 fontFamily: 'Arial, sans-serif',
                 marginTop: 8
             }}>
-                <Box sx={{ width: 1000 }}>
+                <Box sx={{ width: '80%' }}>
                     {surveiList.map((surveiData) => (
                         <Box key={surveiData.surveiID}>
                             <Card sx={{ mt: 4, borderRadius: 2 }}>
@@ -221,22 +221,24 @@ function Survei() {
                                             </CardContent>
                                         </Card>
 
-                                        <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
+                                        <Card sx={{ width: '100%', mt: 2, borderRadius: 3 }}>
                                             <CardContent sx={{ px: 3 }}>
                                                 <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16, mb: 4 }}>
                                                     Choose one or two topics which students should develop relatively higher proficiency (+) and lower proficiency (-).
                                                 </Typography>
                                                 <Box>
-                                                    <Grid container spacing={2} columns={36} fullWidth>
-                                                        <Grid size={12}>
+                                                    <Grid container spacing={1} columns={38} fullWidth>
+                                                        <Grid size={1.5}>
                                                         </Grid>
-                                                        <Grid size={8} textAlign={'center'}>
+                                                        <Grid size={15}>
+                                                        </Grid>
+                                                        <Grid size={7} textAlign={'center'}>
                                                             - (lower)
                                                         </Grid>
-                                                        <Grid size={8} textAlign={'center'}>
+                                                        <Grid size={7} textAlign={'center'}>
                                                             0 (normal)
                                                         </Grid>
-                                                        <Grid size={8} textAlign={'center'}>
+                                                        <Grid size={7} textAlign={'center'}>
                                                             + (higher)
                                                         </Grid>
                                                     </Grid>
@@ -244,14 +246,19 @@ function Survei() {
                                                         .find((p) => p.pertanyaanID === pertanyaanData.pertanyaanID)
                                                         ?.detail.map((pertanyaanDetData) => (
                                                             <React.Fragment key={pertanyaanDetData.pertanyaanDetID}>
-                                                                <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
-                                                                    <Grid size={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <Grid container spacing={1} columns={38} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
+                                                                    <Grid size={1.5} sx={{ display: 'flex', alignItems: 'center' }}>
                                                                         <Typography sx={{ ml: 1 }}>
-                                                                            {pertanyaanDetData.kodePertanyaanDetail} {pertanyaanDetData.pertanyaanDetail}
+                                                                            {pertanyaanDetData.kodePertanyaanDetail}
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                    <Grid size={15} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                        <Typography sx={{ ml: 1 }}>
+                                                                            {pertanyaanDetData.pertanyaanDetail}
                                                                         </Typography>
                                                                     </Grid>
                                                                     {[1, 2, 3].map((value) => (
-                                                                        <Grid size={8} textAlign={'center'} key={value}>
+                                                                        <Grid size={7} textAlign={'center'} key={value}>
                                                                             <Radio
                                                                                 value={value || 2}
                                                                                 checked={
@@ -280,7 +287,7 @@ function Survei() {
                                 ))}
                         </Box>
                     ))}
-                    <Box sx={{ mt: 4, mb:4, display: "flex", justifyContent: "center" }}>
+                    <Box sx={{ mt: 4, mb: 4, display: "flex", justifyContent: "center" }}>
                         <Button type="submit" variant="contained" onClick={() => setConfirmDialogOpen(true)}>
                             Submit
                         </Button>

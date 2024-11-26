@@ -57,7 +57,7 @@ function IsiDataIndustri() {
         e.preventDefault();
         setConfirmDialogOpen(false);
         try {
-            const tipeResID = 5;
+            const tipeResID = 4;
             const tahunLulusan = null;
             const requestData = { ...formData, tipeResID, tahunLulusan };
 

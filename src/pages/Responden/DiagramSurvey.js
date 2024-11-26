@@ -74,7 +74,7 @@ const DiagramSurvey = () => {
       },
       title: {
         display: true,
-        text: `Expected Proficiency Level Survey - ${selectedProgram}`,
+        text: `Expected Proficiency Level Survey - ${selectedProgram.namaProdi}`,
         font: {
           size: 20,
           weight: 'bold',
