@@ -30,7 +30,7 @@ const SelectionBox = ({ onProgramChange }) => {
       sx={{
         position: 'absolute',
         top: '77px',
-        right: '20px',
+        right: '10px',
         padding: '15px',
         zIndex: 1000,
         display: 'flex',
@@ -41,7 +41,7 @@ const SelectionBox = ({ onProgramChange }) => {
       <Grid container alignItems="center" spacing={1}>
         <Grid item xs={12}>
           <FormControl fullWidth variant="outlined" margin="normal">
-            <InputLabel id="select-program-label" shrink>
+            <InputLabel id="select-program-label">
               Pilih Program Studi
             </InputLabel>
             <Select
@@ -50,7 +50,17 @@ const SelectionBox = ({ onProgramChange }) => {
               name="prodiID"
               value={selectedOption}
               onChange={handleChange}
-              label="Pilih Prodi"
+              label="-------------------------"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300, 
+                  },
+                },
+              }}
+              sx={{
+                width: 230, 
+              }}
             >
               {prodiData.map((prodi) => (
                 <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
