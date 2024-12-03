@@ -57,7 +57,7 @@ function IsiDataDosen() {
         setConfirmDialogOpen(false);
         e.preventDefault();
         try {
-            const tipeResID = 4;
+            const tipeResID = 3;
             const tahunLulusan = null;
             const requestData = { ...formData, tipeResID, tahunLulusan };
 

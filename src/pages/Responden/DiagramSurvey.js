@@ -48,6 +48,7 @@ const DiagramSurvey = () => {
               data: dataset.avgJawaban,
               backgroundColor: dataset.bgColor,
             })),
+            namaProdi: programData.namaProdi,
           };
           return acc;
         }, {});
@@ -74,7 +75,8 @@ const DiagramSurvey = () => {
       },
       title: {
         display: true,
-        text: `Expected Proficiency Level Survey - ${selectedProgram}`,
+        text: `Expected Proficiency Level Survey - ${dataSets[selectedProgram]?.namaProdi || 'Unknown Program'
+          }`,
         font: {
           size: 20,
           weight: 'bold',

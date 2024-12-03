@@ -106,7 +106,7 @@ function IsiDataAlumni() {
 
     const calculateTipeRes = (tahunLulusan) => {
         const currentYear = new Date().getFullYear();
-        return currentYear - tahunLulusan <= 4 ? 1 : 2;
+        return currentYear - tahunLulusan < 5 ? 1 : 2;
     };
 
     return (

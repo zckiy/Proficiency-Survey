@@ -16,6 +16,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Pagination
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import CardHeader from "@mui/material/CardHeader";
@@ -37,13 +38,13 @@ function Survei() {
     const [error, setError] = useState(null);
     const [successDialogOpen, setSuccessDialogOpen] = useState(false);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { respondenID } = location.state || {};
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(respondenID);
                 const surveiData = await survei();
                 setSurvei(surveiData);
 
@@ -144,6 +145,11 @@ function Survei() {
         }
     };
 
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     if (loading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -156,6 +162,8 @@ function Survei() {
         return <Typography color="error">{error}</Typography>;
     }
 
+    const currentSurvei = surveiList[currentPage - 1];
+
     return (
         <Container maxWidth="xl">
             <Box sx={{
@@ -164,18 +172,18 @@ function Survei() {
                 fontFamily: 'Arial, sans-serif',
                 marginTop: 8
             }}>
-                <Box sx={{ width: 1000 }}>
-                    {surveiList.map((surveiData) => (
-                        <Box key={surveiData.surveiID}>
+                <Box sx={{ width: '80%' }}>
+                    {currentSurvei && (
+                        <Box>
                             <Card sx={{ mt: 4, borderRadius: 2 }}>
                                 <CardHeader
-                                    title={surveiData.judul}
+                                    title={currentSurvei.judul}
                                     titleTypographyProps={{ variant: "h6", textAlign: "center" }}
                                     sx={{ backgroundColor: "#5B99C2", color: "white" }}
                                 />
                             </Card>
                             {pertanyaanList
-                                .filter((p) => p.surveiID === surveiData.surveiID)
+                                .filter((p) => p.surveiID === currentSurvei.surveiID)
                                 .map((pertanyaanData) => (
                                     <Box key={pertanyaanData.pertanyaanID} sx={{ mt: 2 }}>
                                         <Card sx={{ borderRadius: 2 }}>
@@ -221,22 +229,24 @@ function Survei() {
                                             </CardContent>
                                         </Card>
 
-                                        <Card sx={{ width: 1000, mt: 2, borderRadius: 3 }}>
+                                        <Card sx={{ width: '100%', mt: 2, borderRadius: 3 }}>
                                             <CardContent sx={{ px: 3 }}>
                                                 <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16, mb: 4 }}>
-                                                    Choose one or two topics which students should develop relatively higher proficiency (+) and lower proficiency (-).
+                                                    Choose one or two major required skills for the jobs
                                                 </Typography>
                                                 <Box>
-                                                    <Grid container spacing={2} columns={36} fullWidth>
-                                                        <Grid size={12}>
+                                                    <Grid container spacing={1} columns={38} fullWidth>
+                                                        <Grid size={1.5}>
                                                         </Grid>
-                                                        <Grid size={8} textAlign={'center'}>
+                                                        <Grid size={15}>
+                                                        </Grid>
+                                                        <Grid size={7} textAlign={'center'}>
                                                             - (lower)
                                                         </Grid>
-                                                        <Grid size={8} textAlign={'center'}>
+                                                        <Grid size={7} textAlign={'center'}>
                                                             0 (normal)
                                                         </Grid>
-                                                        <Grid size={8} textAlign={'center'}>
+                                                        <Grid size={7} textAlign={'center'}>
                                                             + (higher)
                                                         </Grid>
                                                     </Grid>
@@ -244,14 +254,19 @@ function Survei() {
                                                         .find((p) => p.pertanyaanID === pertanyaanData.pertanyaanID)
                                                         ?.detail.map((pertanyaanDetData) => (
                                                             <React.Fragment key={pertanyaanDetData.pertanyaanDetID}>
-                                                                <Grid container spacing={2} columns={36} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
-                                                                    <Grid size={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                <Grid container spacing={1} columns={38} sx={{ backgroundColor: grey[100], mt: 1 }} fullWidth>
+                                                                    <Grid size={1.5} sx={{ display: 'flex', alignItems: 'center' }}>
                                                                         <Typography sx={{ ml: 1 }}>
-                                                                            {pertanyaanDetData.kodePertanyaanDetail} {pertanyaanDetData.pertanyaanDetail}
+                                                                            {pertanyaanDetData.kodePertanyaanDetail}
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                    <Grid size={15} sx={{ display: 'flex', alignItems: 'center' }}>
+                                                                        <Typography sx={{ ml: 1 }}>
+                                                                            {pertanyaanDetData.pertanyaanDetail}
                                                                         </Typography>
                                                                     </Grid>
                                                                     {[1, 2, 3].map((value) => (
-                                                                        <Grid size={8} textAlign={'center'} key={value}>
+                                                                        <Grid size={7} textAlign={'center'} key={value}>
                                                                             <Radio
                                                                                 value={value || 2}
                                                                                 checked={
@@ -279,11 +294,22 @@ function Survei() {
                                     </Box>
                                 ))}
                         </Box>
-                    ))}
-                    <Box sx={{ mt: 4, mb:4, display: "flex", justifyContent: "center" }}>
-                        <Button type="submit" variant="contained" onClick={() => setConfirmDialogOpen(true)}>
-                            Submit
-                        </Button>
+                    )}
+                    {currentPage === surveiList.length && (
+                        <Box sx={{ textAlign: 'center', mt: 3 }}>
+                            <Button type="submit" variant="contained" onClick={() => setConfirmDialogOpen(true)}>
+                                Submit
+                            </Button>
+                        </Box>
+                    )}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+                        <Pagination
+                            count={surveiList.length}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            sx={{ mt: 2 }}
+                            color="primary"
+                        />
                     </Box>
                 </Box>
             </Box>
