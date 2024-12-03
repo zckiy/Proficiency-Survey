@@ -15,6 +15,7 @@ import NavbarAdmin from './components/NavbarAdmin';
 import LoginAdmin from './admin/LoginAdmin';
 import DashboardAdmin from './admin/DashboardAdmin';
 import PilihProdiAdmin from './admin/PilihProdiAdmin';
+import QuestionAdmin from './admin/QuestionAdmin';
 
 function App() {
   return (
@@ -47,7 +48,8 @@ function Main() {
     '/pilihProdiAdmin',
     '/survei/:prodiID',
     '/prodi',
-    '/diagram'
+    '/diagram',
+    '/questionAdmin'
   ];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
@@ -85,6 +87,7 @@ function Main() {
         />
         <Route path="/dashboardAdmin" element={<DashboardAdmin />} />
         <Route path="/pilihProdiAdmin" element={<PilihProdiAdmin />} />
+        <Route path="/questionAdmin" element={<QuestionAdmin />} /> 
       </Routes>
 
       {shouldShowFooter && <Footer />}

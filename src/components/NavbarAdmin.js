@@ -31,7 +31,7 @@ function NavbarAdmin({ isLoggedIn, onLogout }) { // Menambahkan onLogout prop
 
                 {/* Tombol Navigasi di sisi kanan */}
                 <Box sx={{ width:'50%' ,justifyContent: 'center',  display: 'flex', alignItems: 'center' }}>
-                    <Button color="inherit" component={Link} to="/questions">
+                    <Button color="inherit" component={Link} to="/questionAdmin">
                         Questions
                     </Button>
                     <Button color="inherit" component={Link} to="/responses">
