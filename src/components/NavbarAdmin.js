@@ -19,49 +19,52 @@ function NavbarAdmin({ isLoggedIn, onLogout }) { // Menambahkan onLogout prop
                             style={{
                                 height: '70px',
                                 marginLeft: '10px',
-                                marginRight: '10px',
                                 marginTop: '10px',
                                 marginBottom: '10px'
                             }}
                         />
-                        <Typography variant="h6" sx={{ color: '#fff', marginLeft: '5px' }}>
+                        <Typography variant="h7" sx={{ color: '#fff', marginLeft: '5px' }}>
                             Graduate Expected Proficiency <br />Level Survey
                         </Typography>
                     </Link>
                 </Box>
 
                 {/* Tombol Navigasi di sisi kanan */}
-                <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-                    <Button color="inherit" component={Link} to="/dashboardAdmin" sx={{ mx: 1 }}>
-                        Home
+                <Box sx={{ width:'50%' ,justifyContent: 'center',  display: 'flex', alignItems: 'center' }}>
+                    <Button color="inherit" component={Link} to="/questions">
+                        Questions
                     </Button>
-                    <Button color="inherit" component={Link} to="/diagramSurvey" sx={{ mx: 1 }}>
+                    <Button color="inherit" component={Link} to="/responses">
+                        Responses
+                    </Button>
+                    <Button color="inherit" component={Link} to="/diagram">
                         Diagram
                     </Button>
-
-                    {/* Tombol Login/Logout dengan Ikon */}
+                
+                 </Box>
+                 <Box>
+                         {/* Tombol Login/Logout dengan Ikon */}
                     <Button
-                        component={Link}
-                        to="/loginAdmin"
-                        variant="contained"
-                        color="default"
-                        startIcon={isLoggedIn ? <LogoutIcon /> : <LoginIcon />} // Ganti ikon sesuai status login
+                            component={Link}
+                            to="/loginAdmin"
+                            variant="contained"
+                            color="default"
+                            startIcon={isLoggedIn ? <LogoutIcon /> : <LoginIcon />} // Ganti ikon sesuai status login
                         sx={{
                             backgroundColor: '#445d80', // Biru gelap yang sesuai dengan navbar
                             color: '#fff', // Warna putih untuk teks dan ikon
-                            '&:hover': {
-                                backgroundColor: '#6a85a1', // Biru lebih terang saat hover
+                            '&:hover': { backgroundColor: '#6a85a1', // Biru lebih terang saat hover
                             },
                             borderRadius: '8px', // Sudut melengkung untuk tombol
                             padding: '6px 16px', // Ukuran padding tombol
                             textTransform: 'none', // Nonaktifkan huruf kapital pada teks
-                            ml: 2, // Jarak dari tombol sebelumnya
+                            alignItems: 'right',
                         }}
                         onClick={isLoggedIn ? onLogout : null} // Panggil onLogout jika sudah login
-                    >
+                        >
                         {isLoggedIn ? 'Logout' : 'Login'} {/* Ganti teks sesuai status login */}
                     </Button>
-                </Box>
+                 </Box>
             </Toolbar>
         </AppBar>
     );

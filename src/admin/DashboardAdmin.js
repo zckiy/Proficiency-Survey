@@ -53,119 +53,21 @@ function DashboardAdmin() {
   };
 
   return (
-    <Box sx={{ backgroundColor: theme.palette.background.default }}>
-      <Container maxWidth="xl" sx={{ textAlign: 'center', marginTop: 1 }}>
-        <Grid item xs={12} md={6}>
-          <Slider {...settings}>
-            <Box>
-              <img src={lulusanImage} alt="Lulusan" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-            </Box>
-            <Box>
-              <img src={polibatamImage} alt="Politeknik Negeri Batam" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-            </Box>
-            <Box>
-              <img src={graduateImage} alt="Graduate" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-            </Box>
-          </Slider>
-
-          <Card sx={{ backgroundColor: '#f5f5f5', padding: 2, marginTop: 4 }}>
-            <CardContent>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Graduate Expected Proficiency Level Survey
-              </Typography>
-              <Typography variant="body1" sx={{ marginTop: 2 }}>
-                Untuk mengetahui tingkat profisiensi lulusan yang dapat dijadikan evaluasi dalam sistem pendidikan.
-                Aplikasi ini membantu memantau lulusan, serta dosen, alumni junior, alumni senior, dan industri.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Container>
-
-      <Container maxWidth="lg" sx={{ textAlign: 'center', marginTop: 4 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          KELOLA SURVEY
-        </Typography>
-        <Grid container spacing={2} sx={{ marginTop: 1 }}>
-          <Grid item xs={12} md={4}>
-            <Card sx={{ maxWidth: 345 }}>
-              <Link to="/pilihProdiAdmin">
-                <Box
-                  component="img"
-                  src={alumniImage}
-                  alt="Alumni"
-                  sx={{
-                    marginTop: '5px',
-                    width: '50%',
-                    height: 140,
-                    cursor: 'pointer',
-                    transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, 
-                  }}
-                  onClick={() => console.log('Navigating to Alumni page...')} 
-                />
-              </Link>
-              <CardContent>
-                <Typography gutterBottom variant="h6" component="div">
-                  ALUMNI
+<Box sx={{ backgroundColor: theme.palette.background.default }}>
+  <Container sx={{ textAlign: 'center', marginTop: 11}}>
+    <Card sx={{ backgroundColor: '#f5f5f5', padding: 2, marginTop: 4 }}>
+      <CardContent>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  Graduate Expected Proficiency Level Survey
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Card sx={{ maxWidth: 345 }}>
-              <Link to="">
-                <Box
-                  component="img"
-                  src={dosenImage}
-                  alt="Dosen"
-                  sx={{
-                    marginTop: '5px',
-                    width: '50%',
-                    height: 140,
-                    cursor: 'pointer',
-                    transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, 
-                  }}
-                  onClick={() => console.log('Navigating to Dosen page...')} 
-                />
-              </Link>
-              <CardContent>
-                <Typography gutterBottom variant="h6" component="div">
-                  DOSEN
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Card sx={{ maxWidth: 345 }}>
-              <Link to="">
-                <Box
-                  component="img"
-                  src={industriImage}
-                  alt="Industri"
-                  sx={{
-                    marginTop: '5px',
-                    width: '50%',
-                    height: 140,
-                    cursor: 'pointer',
-                    transition: '0.3s',
-                    '&:hover': { opacity: 0.7 }, 
-                  }}
-                  onClick={() => console.log('Navigating to Industri page...')} 
-                />
-              </Link>
-              <CardContent>
-                <Typography gutterBottom variant="h6" component="div">
-                  INDUSTRI
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-
-    </Box>
+                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                  Tujuan survei ini adalah untuk memahami harapan dan tingkat kemahiran yang diinginkan dari para lulusan dalam berbagai bidang kompetensi. 
+                  Informasi yang Anda berikan akan sangat berharga bagi kami dalam meningkatkan kualitas pendidikan dan persiapan karier lulusan.
+          </Typography>
+      </CardContent>
+    </Card>
+  </Container>
+</Box>
   );
 }
 
