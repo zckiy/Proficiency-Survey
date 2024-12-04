@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, IconButton, useTheme,TextField } from '@mui/material';
-import Slider from 'react-slick'; 
+import { Box, Container, Typography, Grid, Card, CardContent, IconButton, useTheme } from '@mui/material';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Link } from 'react-router-dom';
-
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
@@ -46,7 +43,13 @@ function DashboardAdmin() {
   <Container sx={{ textAlign: 'center', marginTop: 11}}>
     <Card sx={{ backgroundColor: '#f5f5f5', padding: 2, marginTop: 4 }}>
       <CardContent>
-      <TextField fullWidth label="fullWidth" id="fullWidth" />
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  Graduate Expected Proficiency Level Survey
+                </Typography>
+                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                  Tujuan survei ini adalah untuk memahami harapan dan tingkat kemahiran yang diinginkan dari para lulusan dalam berbagai bidang kompetensi. 
+                  Informasi yang Anda berikan akan sangat berharga bagi kami dalam meningkatkan kualitas pendidikan dan persiapan karier lulusan.
+          </Typography>
       </CardContent>
     </Card>
   </Container>

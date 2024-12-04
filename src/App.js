@@ -12,65 +12,34 @@ import FinishPage from './pages/Responden/FinishPage';
 import PilihProdi from './pages/Responden/PilihProdi';
 
 import NavbarAdmin from './components/NavbarAdmin';
-import LoginAdmin from './admin/LoginAdmin';
-import DashboardAdmin from './admin/DashboardAdmin';
-import PilihProdiAdmin from './admin/PilihProdiAdmin';
-import QuestionAdmin from './admin/QuestionAdmin';
+import LoginAdmin from './pages/Auth/LoginAdmin';
+import DashboardAdmin from './pages/Admin/DashboardAdmin';
+import QuestionAdmin from './pages/Admin/QuestionAdmin';
 
 function App() {
   return (
     <Router>
-      <Main />
+      <Routes>
+        <Route path="/*" element={<Main />} />
+        <Route path="/admin/*" element={<AdminLayout />} />
+      </Routes>
     </Router>
   );
 }
 
 function Main() {
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const hideNavbarRoutes = [
-    '/survei',
-    '/finish',
-    '/dashboardAdmin',
-    '/loginAdmin',
-    '/pilihProdiAdmin'
-  ];
-
-  const hideFooterRoutes = [
-    '/industri',
-    '/dosen',
-    '/alumni',
-    '/survei',
-    '/finish',
-    '/dashboardAdmin',
-    '/loginAdmin',
-    '/pilihProdiAdmin',
-    '/survei/:prodiID',
-    '/prodi',
-    '/diagram',
-    '/questionAdmin'
-  ];
+  const hideNavbarRoutes = ['/survei', '/finish'];
+  const hideFooterRoutes = ['/industri', '/dosen', '/alumni', '/survei', '/finish', '/diagram'];
 
   const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
   const shouldShowFooter = !hideFooterRoutes.some((route) =>
     matchPath(route, location.pathname)
   );
-  const isDashboardAdmin = location.pathname === '/dashboardAdmin';
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
 
   return (
     <>
       {shouldShowNavbar && <Navbar />}
-      {isDashboardAdmin && <NavbarAdmin isLoggedIn={isLoggedIn} onLogout={handleLogout} />}
-
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/industri" element={<IsiDataIndustri />} />
@@ -80,17 +49,39 @@ function Main() {
         <Route path="/survei/:prodiID" element={<Survei />} />
         <Route path="/finish" element={<FinishPage />} />
         <Route path="/prodi" element={<PilihProdi />} />
-
-        <Route
-          path="/loginAdmin"
-          element={<LoginAdmin onLoginSuccess={handleLoginSuccess} />}
-        />
-        <Route path="/dashboardAdmin" element={<DashboardAdmin />} />
-        <Route path="/pilihProdiAdmin" element={<PilihProdiAdmin />} />
-        <Route path="/questionAdmin" element={<QuestionAdmin />} /> 
       </Routes>
-
       {shouldShowFooter && <Footer />}
+    </>
+  );
+}
+
+function AdminLayout() {
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  const adminRoutes = [
+    { path: '/login', element: <LoginAdmin onLoginSuccess={handleLoginSuccess} /> },
+    { path: '/dashboard', element: <DashboardAdmin /> },
+    { path: '/question', element: <QuestionAdmin /> },
+    { path: '/diagram', element: <DiagramSurvey /> }
+  ];
+
+  return (
+    <>
+      <NavbarAdmin isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <Routes>
+        {adminRoutes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))}
+      </Routes>
     </>
   );
 }

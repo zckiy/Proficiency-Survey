@@ -1,18 +1,19 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Logo from '../assets/images/image.png';
 import LoginIcon from '@mui/icons-material/Login';
-import HomeIcon from '@mui/icons-material/Home';
-import LogoutIcon from '@mui/icons-material/Logout'; // Impor ikon logout
+import LogoutIcon from '@mui/icons-material/Logout';
 
-function NavbarAdmin({ isLoggedIn, onLogout }) { // Menambahkan onLogout prop
+function NavbarAdmin({ isLoggedIn, onLogout }) {
+    const location = useLocation();
+
+    const isActive = (path) => location.pathname === path;
     return (
         <AppBar position="static" sx={{ backgroundColor: '#577399' }}>
-            <Toolbar>
-                {/* Logo dan Judul di sisi kiri */}
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Link to="/dashboardAdmin" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', width: 500 }}>
+                    <Link to="/admin/question" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
                         <img
                             src={Logo}
                             alt="Logo"
@@ -30,41 +31,62 @@ function NavbarAdmin({ isLoggedIn, onLogout }) { // Menambahkan onLogout prop
                 </Box>
 
                 {/* Tombol Navigasi di sisi kanan */}
-                <Box sx={{ width:'50%' ,justifyContent: 'center',  display: 'flex', alignItems: 'center' }}>
-                    <Button color="inherit" component={Link} to="/questionAdmin">
+                <Box sx={{ width: '50%', justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/admin/question"
+                        sx={{
+                            borderBottom: isActive('/admin/question') ? '3px solid #fff' : 'none',
+                            textTransform: 'none'
+                        }}
+                    >
                         Questions
                     </Button>
-                    <Button color="inherit" component={Link} to="/responses">
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/responses"
+                        sx={{
+                            borderBottom: isActive('/responses') ? '3px solid #fff' : 'none',
+                            textTransform: 'none'
+                        }}
+                    >
                         Responses
                     </Button>
-                    <Button color="inherit" component={Link} to="/diagram">
-                        Diagram
-                    </Button>
-                
-                 </Box>
-                 <Box>
-                         {/* Tombol Login/Logout dengan Ikon */}
                     <Button
-                            component={Link}
-                            to="/loginAdmin"
-                            variant="contained"
-                            color="default"
-                            startIcon={isLoggedIn ? <LogoutIcon /> : <LoginIcon />} // Ganti ikon sesuai status login
+                        color="inherit"
+                        component={Link}
+                        to="/admin/diagram"
                         sx={{
-                            backgroundColor: '#445d80', // Biru gelap yang sesuai dengan navbar
-                            color: '#fff', // Warna putih untuk teks dan ikon
-                            '&:hover': { backgroundColor: '#6a85a1', // Biru lebih terang saat hover
-                            },
-                            borderRadius: '8px', // Sudut melengkung untuk tombol
-                            padding: '6px 16px', // Ukuran padding tombol
-                            textTransform: 'none', // Nonaktifkan huruf kapital pada teks
+                            borderBottom: isActive('/admin/diagram') ? '3px solid #fff' : 'none',
+                            textTransform: 'none'
+                        }}
+                    >
+                        Result
+                    </Button>
+                </Box>
+                <Box sx={{ width: 500, justifyContent: 'end', display: 'flex', alignItems: 'center' }}>
+                    <Button
+                        component={Link}
+                        to="/admin/login"
+                        variant="contained"
+                        color="default"
+                        startIcon={isLoggedIn ? <LogoutIcon /> : <LoginIcon />}
+                        sx={{
+                            backgroundColor: '#445d80',
+                            color: '#fff',
+                            '&:hover': { backgroundColor: '#6a85a1' },
+                            borderRadius: '8px',
+                            padding: '6px 16px',
+                            textTransform: 'none',
                             alignItems: 'right',
                         }}
-                        onClick={isLoggedIn ? onLogout : null} // Panggil onLogout jika sudah login
-                        >
-                        {isLoggedIn ? 'Logout' : 'Login'} {/* Ganti teks sesuai status login */}
+                        onClick={isLoggedIn ? onLogout : null}
+                    >
+                        {isLoggedIn ? 'Logout' : 'Login'}
                     </Button>
-                 </Box>
+                </Box>
             </Toolbar>
         </AppBar>
     );

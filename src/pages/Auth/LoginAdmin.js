@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Box, Typography, TextField, Button, CssBaseline, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import logo from '../assets/images/image.png';
+import logo from '../../assets/images/image.png';
 import { useNavigate } from 'react-router-dom'; // Impor useNavigate untuk redirect
 
 // Buat tema dengan latar belakang khusus
