@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Container, Box, Typography, TextField, Button, CssBaseline, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '../../assets/images/image.png';
-import { useNavigate } from 'react-router-dom'; // Impor useNavigate untuk redirect
+import { useNavigate } from 'react-router-dom';
+import { loginAdmin } from '../../api/LoginAPI';
 
 // Buat tema dengan latar belakang khusus
 const theme = createTheme({
@@ -19,16 +20,24 @@ function LoginAdmin({ onLoginSuccess }) {
     const [error, setError] = useState('');
     const navigate = useNavigate(); // Inisialisasi useNavigate
 
-    const handleLogin = (e) => {
+    // Fungsi untuk menangani login
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError(''); // Reset error sebelum memulai autentikasi
 
-        // Memeriksa username dan password
-        if (username === 'admin123' && password === 'admin123') {
-            setError('');
-            onLoginSuccess(); // Panggil fungsi setelah login berhasil
-            navigate('/dashboardAdmin'); // Arahkan ke halaman DashboardAdmin
-        } else {
-            setError('Invalid username or password');
+        try {
+            const authResponse = await loginAdmin(username, password);
+            if (authResponse.success) {
+                setError('');
+                alert(authResponse.message);
+                onLoginSuccess(); // Panggil callback jika login sukses
+                navigate('/admin/question');
+            } else {
+                setError(authResponse.message);
+            }
+        } catch (error) {
+            console.error(error);
+            setError('Terjadi kesalahan saat mencoba login.');
         }
     };
 
@@ -66,7 +75,7 @@ function LoginAdmin({ onLoginSuccess }) {
                         padding: '30px',
                         borderRadius: '15px',
                         boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
-                        height: '400px',
+                        height: '450px',
                     }}
                 >
                     <Typography

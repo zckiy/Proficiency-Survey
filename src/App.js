@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, matchPath } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, matchPath, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LandingPage from './pages/Responden/LandingPage';
@@ -25,8 +25,8 @@ function App() {
       </Routes>
     </Router>
   );
-}
-
+} 
+  
 function Main() {
   const location = useLocation();
   const hideNavbarRoutes = ['/survei', '/finish'];
@@ -67,6 +67,13 @@ function AdminLayout() {
     setIsLoggedIn(false);
   };
 
+  useEffect(() => {
+    if (!isLoggedIn && location.pathname !== '/admin/login') {
+      setIsLoggedIn(false);
+    }
+  }, [location.pathname, isLoggedIn]);
+
+
   const adminRoutes = [
     { path: '/login', element: <LoginAdmin onLoginSuccess={handleLoginSuccess} /> },
     { path: '/dashboard', element: <DashboardAdmin /> },
@@ -74,6 +81,15 @@ function AdminLayout() {
     { path: '/diagram', element: <DiagramSurvey /> }
   ];
 
+  if (!isLoggedIn) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginAdmin onLoginSuccess={handleLoginSuccess} />} />
+        {/* Redirect jika mencoba mengakses halaman tanpa autentikasi */}
+        <Route path="*" element={<Navigate to="/admin/login" />} />
+      </Routes>
+    );
+  }
   return (
     <>
       <NavbarAdmin isLoggedIn={isLoggedIn} onLogout={handleLogout} />
