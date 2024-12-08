@@ -64,49 +64,41 @@ function MainLayout() {
 
 // Layout untuk Admin
 function AdminLayout() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   const location = useLocation();
 
-  // Fungsi login dan logout
-  const handleLoginSuccess = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  // Logout logic
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("isLoggedIn");
+  };
 
-  // Redirect jika belum login dan mencoba mengakses halaman selain login
   useEffect(() => {
-    if (!isLoggedIn && location.pathname !== "/admin/login") {
-      setIsLoggedIn(false);
-    }
-  }, [isLoggedIn, location.pathname]);
+    const loggedInStatus = localStorage.getItem("isLoggedIn");
+    setIsLoggedIn(loggedInStatus === "true");
+  }, [location.pathname]); // Memeriksa setiap kali lokasi berubah.
 
-  // Konfigurasi route admin
-  const ADMIN_ROUTES = [
-    { path: "/login", element: <LoginAdmin onLoginSuccess={handleLoginSuccess} /> },
-    { path: "/dashboard", element: <DashboardAdmin /> },
-    { path: "/question", element: <QuestionAdmin /> },
-    { path: "/diagram", element: <DiagramSurvey /> },
-  ];
-
-  // Jika belum login, hanya tampilkan halaman login
   if (!isLoggedIn) {
     return (
       <Routes>
-        <Route path="/login" element={<LoginAdmin onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="/login" element={<LoginAdmin onLoginSuccess={() => setIsLoggedIn(true)} />} />
         <Route path="*" element={<Navigate to="/admin/login" />} />
       </Routes>
     );
   }
 
-  // Layout untuk admin yang sudah login
   return (
     <>
       <NavbarAdmin isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
-        {ADMIN_ROUTES.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))}
+        <Route path="/login" element={<LoginAdmin />} />
+        <Route path="/dashboard" element={<DashboardAdmin />} />
+        <Route path="/question" element={<QuestionAdmin />} />
+        <Route path="/diagram" element={<DiagramSurvey />} />
       </Routes>
     </>
   );
 }
+
 
 export default App;

@@ -63,6 +63,7 @@ function LoginAdmin({ onLoginSuccess }) {
       const authResponse = await loginAdmin(formState.username, formState.password);
       if (authResponse.success) {
         alert(authResponse.message);
+        localStorage.setItem("isLoggedIn", "true");
         onLoginSuccess();
         navigate("/admin/question");
       } else {
@@ -77,7 +78,7 @@ function LoginAdmin({ onLoginSuccess }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container component="main" maxWidth="xs" sx={{ marginTop: "50px" }}>
+      <Container component="main" maxWidth="xs" sx={{ marginTop: "50px", marginBottom: "60px" }}>
         <img
           src={logo}
           alt="Logo"
