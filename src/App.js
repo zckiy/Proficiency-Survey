@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, matchPath, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import LandingPage from './pages/Responden/LandingPage';
-import IsiDataIndustri from './pages/Responden/IsiDataIndustri';
-import IsiDataAlumni from './pages/Responden/IsiDataAlumni';
-import IsiDataDosen from './pages/Responden/IsiDataDosen';
-import DiagramSurvey from './pages/Responden/DiagramSurvey';
-import Survei from './pages/Responden/Survei';
-import FinishPage from './pages/Responden/FinishPage';
-import PilihProdi from './pages/Responden/PilihProdi';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import NavbarAdmin from "./components/NavbarAdmin";
+
+// Pages Responden
+import LandingPage from "./pages/Responden/LandingPage";
+import IsiDataIndustri from "./pages/Responden/IsiDataIndustri";
+import IsiDataAlumni from "./pages/Responden/IsiDataAlumni";
+import IsiDataDosen from "./pages/Responden/IsiDataDosen";
+import DiagramSurvey from "./pages/Responden/DiagramSurvey";
+import Survei from "./pages/Responden/Survei";
+import FinishPage from "./pages/Responden/FinishPage";
+import PilihProdi from "./pages/Responden/PilihProdi";
 
 import NavbarAdmin from './components/NavbarAdmin';
 import LoginAdmin from './pages/Auth/LoginAdmin';
@@ -19,22 +22,26 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/*" element={<Main />} />
+        {/* Responden Routes */}
+        <Route path="/*" element={<MainLayout />} />
+
+        {/* Admin Routes */}
         <Route path="/admin/*" element={<AdminLayout />} />
       </Routes>
     </Router>
   );
-} 
-  
-function Main() {
-  const location = useLocation();
-  const hideNavbarRoutes = ['/survei', '/finish'];
-  const hideFooterRoutes = ['/industri', '/dosen', '/alumni', '/survei', '/finish', '/diagram'];
+}
 
-  const shouldShowNavbar = !hideNavbarRoutes.includes(location.pathname);
-  const shouldShowFooter = !hideFooterRoutes.some((route) =>
-    matchPath(route, location.pathname)
-  );
+// Layout untuk Responden
+function MainLayout() {
+  const location = useLocation();
+
+  // Daftar route tanpa Navbar dan Footer
+  const HIDE_NAVBAR_ROUTES = ["/survei", "/finish"];
+  const HIDE_FOOTER_ROUTES = ["/industri", "/dosen", "/alumni", "/survei", "/finish", "/diagram"];
+
+  const shouldShowNavbar = !HIDE_NAVBAR_ROUTES.includes(location.pathname);
+  const shouldShowFooter = !HIDE_FOOTER_ROUTES.includes(location.pathname);
 
   return (
     <>
@@ -54,16 +61,15 @@ function Main() {
   );
 }
 
+// Layout untuk Admin
 function AdminLayout() {
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
+  // Logout logic
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem("isLoggedIn");
   };
 
   useEffect(() => {
@@ -82,22 +88,24 @@ function AdminLayout() {
   if (!isLoggedIn) {
     return (
       <Routes>
-        <Route path="/login" element={<LoginAdmin onLoginSuccess={handleLoginSuccess} />} />
-        {/* Redirect jika mencoba mengakses halaman tanpa autentikasi */}
+        <Route path="/login" element={<LoginAdmin onLoginSuccess={() => setIsLoggedIn(true)} />} />
         <Route path="*" element={<Navigate to="/admin/login" />} />
       </Routes>
     );
   }
+
   return (
     <>
       <NavbarAdmin isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
-        {adminRoutes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))}
+        <Route path="/login" element={<LoginAdmin />} />
+        <Route path="/dashboard" element={<DashboardAdmin />} />
+        <Route path="/question" element={<QuestionAdmin />} />
+        <Route path="/diagram" element={<DiagramSurvey />} />
       </Routes>
     </>
   );
 }
+
 
 export default App;
