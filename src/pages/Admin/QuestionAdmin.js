@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
-import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -17,27 +15,19 @@ import {
   Modal,
   IconButton,
   List,
-  ListItem,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  AppBar,
-  Tabs,
-  Tab,
-  Checkbox
+  ListItem
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid2";
-import { useNavigate, useLocation } from "react-router-dom";
 import { pertanyaan, survei, pertanyaanDetail } from "../../api/SurveiAPI";
 import SelectionBox from '../Responden/SelectionBox';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import { prodi } from '../../api/SurveiAPI';
+import { insertPertanyaan, insertPertanyaanDet } from '../../api/QuestionAPI';
+import { Add, Remove } from '@mui/icons-material';
 
-const style = {
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -51,39 +41,6 @@ const style = {
   pt: 2
 };
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
-
 function QuestionAdmin() {
   const [surveiList, setSurvei] = useState([]);
   const [pertanyaanList, setPertanyaan] = useState([]);
@@ -94,13 +51,75 @@ function QuestionAdmin() {
   const [selectedProdiID, setSelectedProdiID] = useState(1);
   const [open, setOpen] = React.useState(false);
   const [prodiData, setProdiData] = useState([]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [value, setValue] = React.useState(0);
-  const theme = useTheme();
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+
+  const [formData, setFormData] = useState({
+    surveiID: 0,
+    prodiID: 0,
+    kodePertanyaan: '',
+    pertanyaan: '',
+    setAll: false,
+  });
+
+  const [details, setDetails] = useState([
+    { pertanyaanID: 0, kodePertanyaanDetail: '', pertanyaanDetail: '' },
+  ]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
+
+  const handleDetailChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedDetails = [...details];
+    updatedDetails[index][name] = value;
+    setDetails(updatedDetails);
+  };
+
+  const addDetailRow = () => {
+    setDetails([
+      ...details,
+      { pertanyaanID: 0, kodePertanyaanDetail: '', pertanyaanDetail: '' },
+    ]);
+  };
+
+  const removeDetailRow = (index) => {
+    const updatedDetails = details.filter((_, i) => i !== index);
+    setDetails(updatedDetails);
+  };
+
+  const isPertanyaanValid = formData.pertanyaan.trim() !== '';
+
+  // Handle submit for `insert` and `insert-detail`
+  const handleSubmit = async () => {
+    if (!isPertanyaanValid) {
+      setError('Pertanyaan utama harus diisi terlebih dahulu.');
+      return;
+    }
+
+    // If validation passes, submit the data
+    setError('');
+    try {
+      // Submit pertanyaan (insert)
+      const responseInsert = await insertPertanyaan(formData);
+
+      // Submit pertanyaan detail (insert-detail)
+      const responseInsertDetail = await insertPertanyaanDet(details);
+
+      alert('Data berhasil dikirim: ' + JSON.stringify(responseInsert.data));
+      alert('Detail berhasil dikirim: ' + JSON.stringify(responseInsertDetail.data));
+
+      handleClose();
+    } catch (error) {
+      alert('Gagal mengirim data: ' + error.message);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -192,158 +211,126 @@ function QuestionAdmin() {
                         <AddCircleIcon />
                       </IconButton>
                     </ListItem>
-                    <ListItem sx={{ py: 0 }}>
-                      <IconButton onClick={handleOpen} color="success" sx={{ py: 0, mt: 1 }}>
-                        <BuildCircleIcon />
-                      </IconButton>
-                    </ListItem>
                   </List>
-                  <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                  >
-                    <Box sx={style}>
-                      <Box sx={{ bgcolor: 'background.paper', width: '100%' }}>
-                        <AppBar position="static">
-                          <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            indicatorColor="primary"
-                            textColor="inherit"
-                            variant="fullWidth"
-                            aria-label="full width tabs example"
-                            sx={{ bgcolor: '#577399' }}
-                          >
-                            <Tab label="Header" {...a11yProps(0)} />
-                            <Tab label="Detail" {...a11yProps(1)} />
-                          </Tabs>
-                        </AppBar>
-                        <TabPanel value={value} index={0} dir={theme.direction}>
-                          <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Add Question
-                          </Typography>
-                          <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <InputLabel
-                              id="prodi-label"
-                              shrink
-                              sx={{
-                                backgroundColor: '#fff',
-                                padding: '0 4px',
-                                marginLeft: '-4px',
-                              }}
-                            >
-                              Program Studi
-                            </InputLabel>
-                            <Select
-                              disabled
-                              labelId="prodi-label"
-                              id="prodi"
-                              name="prodiID"
-                              label="Pilih Prodi"
-                              value={selectedProdiID}
-                            >
-                              {prodiData.map((prodi) => (
-                                <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
-                                  {prodi.namaProdi}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                          <TextField
-                            label="Kode Pertanyaan"
-                            name="kodePertanyaan"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{ shrink: true }}
-                            sx={{ mt: 3 }}
-                          />
-                          <TextField
-                            label="Question"
-                            name="pertanyaan"
-                            variant="outlined"
-                            multiline
-                            rows={4}
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{ shrink: true }}
-                          />
-                          <FormControlLabel control={<Checkbox defaultChecked />} label="Set All" />
-                        </TabPanel>
-                        <TabPanel value={value} index={1} dir={theme.direction}>
-                          <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Add Question Detail
-                          </Typography>
-                          <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <InputLabel
-                              id="prodi-label"
-                              shrink
-                              sx={{
-                                backgroundColor: '#fff',
-                                padding: '0 4px',
-                                marginLeft: '-4px',
-                              }}
-                            >
-                              Program Studi
-                            </InputLabel>
-                            <Select
-                              disabled
-                              labelId="prodi-label"
-                              id="prodi"
-                              name="prodiID"
-                              label="Pilih Prodi"
-                              value={selectedProdiID}
-                            >
-                              {prodiData.map((prodi) => (
-                                <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
-                                  {prodi.namaProdi}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                          <TextField
-                            label="Kode Pertanyaan"
-                            name="kodePertanyaan"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{ shrink: true }}
-                            sx={{ mt: 3 }}
-                          />
-                          <TextField
-                            label="Question"
-                            name="pertanyaan"
-                            variant="outlined"
-                            multiline
-                            rows={4}
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{ shrink: true }}
-                          />
-                        </TabPanel>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          sx={{
-                            width: '95%',
-                            backgroundColor: '#577399',
-                            textTransform: 'none',
-                            '&:hover': {
-                              backgroundColor: '#4a6178',
-                            },
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </Box>
-                    </Box>
-                  </Modal>
                 </Grid>
+                <Modal open={open} onClose={handleClose}>
+                  <Box sx={modalStyle}>
+                    <Typography variant="h6" component="h2" gutterBottom>
+                      Tambah Pertanyaan
+                    </Typography>
+                    <Grid container spacing={2}>
+                      {/* Form untuk Insert */}
+                      <Grid>
+                        <input
+                          fullWidth
+                          label="Survei ID"
+                          name="surveiID"
+                          value={currentSurvei.surveiID}
+                          onChange={handleInputChange}
+                          type="hidden"
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          label="Prodi ID"
+                          name="prodiID"
+                          value={formData.prodiID}
+                          onChange={handleInputChange}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          label="Kode Pertanyaan"
+                          name="kodePertanyaan"
+                          value={formData.kodePertanyaan}
+                          onChange={handleInputChange}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          label="Pertanyaan"
+                          name="pertanyaan"
+                          value={formData.pertanyaan}
+                          onChange={handleInputChange}
+                          error={!isPertanyaanValid}
+                          helperText={!isPertanyaanValid ? 'Pertanyaan utama wajib diisi.' : ''}
+                        />
+                      </Grid>
+
+                      {/* Tampilkan pesan error jika pertanyaan utama kosong */}
+                      {error && (
+                        <Grid item xs={12}>
+                          <Typography color="error">{error}</Typography>
+                        </Grid>
+                      )}
+
+                      {/* Form untuk Insert Detail */}
+                      <Grid item xs={12}>
+                        <Typography variant="h6" component="h2" gutterBottom>
+                          Tambah Detail Pertanyaan
+                        </Typography>
+                        {details.map((detail, index) => (
+                          <Grid container spacing={1} key={index}>
+                            <Grid item xs={4}>
+                              <TextField
+                                fullWidth
+                                label="Pertanyaan ID"
+                                name="pertanyaanID"
+                                value={detail.pertanyaanID}
+                                onChange={(e) => handleDetailChange(index, e)}
+                                disabled={!isPertanyaanValid} // Disable input jika pertanyaan utama kosong
+                              />
+                            </Grid>
+                            <Grid item xs={4}>
+                              <TextField
+                                fullWidth
+                                label="Kode Detail"
+                                name="kodePertanyaanDetail"
+                                value={detail.kodePertanyaanDetail}
+                                onChange={(e) => handleDetailChange(index, e)}
+                                disabled={!isPertanyaanValid} // Disable input jika pertanyaan utama kosong
+                              />
+                            </Grid>
+                            <Grid item xs={4}>
+                              <TextField
+                                fullWidth
+                                label="Detail"
+                                name="pertanyaanDetail"
+                                value={detail.pertanyaanDetail}
+                                onChange={(e) => handleDetailChange(index, e)}
+                                disabled={!isPertanyaanValid} // Disable input jika pertanyaan utama kosong
+                              />
+                            </Grid>
+                            <Grid item xs={12} textAlign="right">
+                              <IconButton onClick={() => removeDetailRow(index)} color="error">
+                                <Remove />
+                              </IconButton>
+                              {index === details.length - 1 && (
+                                <IconButton onClick={addDetailRow} color="primary">
+                                  <Add />
+                                </IconButton>
+                              )}
+                            </Grid>
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          fullWidth
+                          onClick={handleSubmit}
+                          disabled={!isPertanyaanValid} // Disable tombol jika pertanyaan utama kosong
+                        >
+                          Simpan Data
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Modal>
               </Grid>
               {pertanyaanList
                 .filter((p) => p.surveiID === currentSurvei.surveiID)

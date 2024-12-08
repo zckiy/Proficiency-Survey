@@ -13,7 +13,6 @@ import PilihProdi from './pages/Responden/PilihProdi';
 
 import NavbarAdmin from './components/NavbarAdmin';
 import LoginAdmin from './pages/Auth/LoginAdmin';
-import DashboardAdmin from './pages/Admin/DashboardAdmin';
 import QuestionAdmin from './pages/Admin/QuestionAdmin';
 
 function App() {
@@ -76,7 +75,6 @@ function AdminLayout() {
 
   const adminRoutes = [
     { path: '/login', element: <LoginAdmin onLoginSuccess={handleLoginSuccess} /> },
-    { path: '/dashboard', element: <DashboardAdmin /> },
     { path: '/question', element: <QuestionAdmin /> },
     { path: '/diagram', element: <DiagramSurvey /> }
   ];
