@@ -14,9 +14,9 @@ import Survei from "./pages/Responden/Survei";
 import FinishPage from "./pages/Responden/FinishPage";
 import PilihProdi from "./pages/Responden/PilihProdi";
 
-import NavbarAdmin from './components/NavbarAdmin';
-import LoginAdmin from './pages/Auth/LoginAdmin';
-import QuestionAdmin from './pages/Admin/QuestionAdmin';
+// Pages Admin
+import LoginAdmin from "./pages/Auth/LoginAdmin";
+import QuestionAdmin from "./pages/Admin/QuestionAdmin";
 
 function App() {
   return (
@@ -73,17 +73,9 @@ function AdminLayout() {
   };
 
   useEffect(() => {
-    if (!isLoggedIn && location.pathname !== '/admin/login') {
-      setIsLoggedIn(false);
-    }
-  }, [location.pathname, isLoggedIn]);
-
-
-  const adminRoutes = [
-    { path: '/login', element: <LoginAdmin onLoginSuccess={handleLoginSuccess} /> },
-    { path: '/question', element: <QuestionAdmin /> },
-    { path: '/diagram', element: <DiagramSurvey /> }
-  ];
+    const loggedInStatus = localStorage.getItem("isLoggedIn");
+    setIsLoggedIn(loggedInStatus === "true");
+  }, [location.pathname]); // Memeriksa setiap kali lokasi berubah.
 
   if (!isLoggedIn) {
     return (
@@ -99,13 +91,11 @@ function AdminLayout() {
       <NavbarAdmin isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
         <Route path="/login" element={<LoginAdmin />} />
-        <Route path="/dashboard" element={<DashboardAdmin />} />
         <Route path="/question" element={<QuestionAdmin />} />
         <Route path="/diagram" element={<DiagramSurvey />} />
       </Routes>
     </>
   );
 }
-
 
 export default App;

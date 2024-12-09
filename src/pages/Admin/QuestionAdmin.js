@@ -15,7 +15,11 @@ import {
   Modal,
   IconButton,
   List,
-  ListItem
+  ListItem,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import CardHeader from "@mui/material/CardHeader";
@@ -32,7 +36,7 @@ const modalStyle = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 900,
+  width: '90%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -51,28 +55,79 @@ function QuestionAdmin() {
   const [selectedProdiID, setSelectedProdiID] = useState(1);
   const [open, setOpen] = React.useState(false);
   const [prodiData, setProdiData] = useState([]);
+  const [pertanyaanID, setPertanyaanID] = useState(null);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const currentSurvei = surveiList[currentPage - 1];
+
   const [formData, setFormData] = useState({
-    surveiID: 0,
-    prodiID: 0,
+    surveiID: currentSurvei?.surveiID || 0,
+    prodiID: selectedProdiID,
     kodePertanyaan: '',
     pertanyaan: '',
     setAll: false,
   });
 
   const [details, setDetails] = useState([
-    { pertanyaanID: 0, kodePertanyaanDetail: '', pertanyaanDetail: '' },
+    { kodePertanyaanDetail: '', pertanyaanDetail: '' },
   ]);
+
+  const fetchData = async () => {
+    try {
+      const surveiData = await survei();
+      setSurvei(surveiData);
+
+      const allPertanyaan = await Promise.all(
+        surveiData.map(async (surveiItem) => {
+          const pertanyaanData = await pertanyaan(surveiItem.surveiID, selectedProdiID);
+          return { surveiID: surveiItem.surveiID, pertanyaan: pertanyaanData };
+        })
+      );
+
+      setPertanyaan(allPertanyaan.flatMap((item) => item.pertanyaan));
+
+      const allPertanyaanDet = await Promise.all(
+        allPertanyaan.flatMap((item) =>
+          item.pertanyaan.map(async (pertanyaanItem) => {
+            const detailData = await pertanyaanDetail(pertanyaanItem.pertanyaanID);
+            return { pertanyaanID: pertanyaanItem.pertanyaanID, detail: detailData };
+          })
+        )
+      );
+
+      setPertanyaanDet(allPertanyaanDet);
+
+      const prodiData = await prodi();
+      setProdiData(prodiData);
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedProdiID]);
+
+  useEffect(() => {
+    if (currentSurvei?.surveiID && formData.surveiID !== currentSurvei.surveiID) {
+      setFormData((prev) => ({
+        ...prev,
+        surveiID: currentSurvei.surveiID,
+      }));
+    }
+  }, [currentSurvei]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "surveiID" || name === "prodiID" ? parseInt(value, 10) : value,
+    }));
   };
 
   const handleDetailChange = (index, e) => {
@@ -85,7 +140,7 @@ function QuestionAdmin() {
   const addDetailRow = () => {
     setDetails([
       ...details,
-      { pertanyaanID: 0, kodePertanyaanDetail: '', pertanyaanDetail: '' },
+      { kodePertanyaanDetail: '', pertanyaanDetail: '' },
     ]);
   };
 
@@ -96,68 +151,38 @@ function QuestionAdmin() {
 
   const isPertanyaanValid = formData.pertanyaan.trim() !== '';
 
-  // Handle submit for `insert` and `insert-detail`
   const handleSubmit = async () => {
     if (!isPertanyaanValid) {
       setError('Pertanyaan utama harus diisi terlebih dahulu.');
       return;
     }
 
-    // If validation passes, submit the data
     setError('');
     try {
-      // Submit pertanyaan (insert)
       const responseInsert = await insertPertanyaan(formData);
 
-      // Submit pertanyaan detail (insert-detail)
-      const responseInsertDetail = await insertPertanyaanDet(details);
+      if (responseInsert?.data?.insertId) {
+        setPertanyaanID(responseInsert.data.insertId);
 
-      alert('Data berhasil dikirim: ' + JSON.stringify(responseInsert.data));
-      alert('Detail berhasil dikirim: ' + JSON.stringify(responseInsertDetail.data));
+        const detailsWithPertanyaanID = details.map((detail) => ({
+          ...detail,
+          pertanyaanID: responseInsert.data.insertId,
+        }));
+
+        const responseInsertDetail = await insertPertanyaanDet(detailsWithPertanyaanID);
+
+        alert('Data berhasil dikirim: ' + JSON.stringify(responseInsertDetail.data));
+      } else {
+        throw new Error('Gagal mendapatkan ID pertanyaan.');
+      }
+
+      fetchData();
 
       handleClose();
     } catch (error) {
-      alert('Gagal mengirim data: ' + error.message);
+      setError('Gagal mengirim data: ' + error.message);
     }
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const surveiData = await survei();
-        setSurvei(surveiData);
-
-        const allPertanyaan = await Promise.all(
-          surveiData.map(async (surveiItem) => {
-            const pertanyaanData = await pertanyaan(surveiItem.surveiID, selectedProdiID);
-            return { surveiID: surveiItem.surveiID, pertanyaan: pertanyaanData };
-          })
-        );
-
-        setPertanyaan(allPertanyaan.flatMap((item) => item.pertanyaan));
-
-        const allPertanyaanDet = await Promise.all(
-          allPertanyaan.flatMap((item) =>
-            item.pertanyaan.map(async (pertanyaanItem) => {
-              const detailData = await pertanyaanDetail(pertanyaanItem.pertanyaanID);
-              return { pertanyaanID: pertanyaanItem.pertanyaanID, detail: detailData };
-            })
-          )
-        );
-
-        setPertanyaanDet(allPertanyaanDet);
-
-        const prodiData = await prodi();
-        setProdiData(prodiData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [selectedProdiID]);
+  };
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -179,8 +204,6 @@ function QuestionAdmin() {
   if (error) {
     return <Typography color="error">{error}</Typography>;
   }
-
-  const currentSurvei = surveiList[currentPage - 1];
 
   return (
     <Container maxWidth="xl">
@@ -218,116 +241,121 @@ function QuestionAdmin() {
                     <Typography variant="h6" component="h2" gutterBottom>
                       Tambah Pertanyaan
                     </Typography>
-                    <Grid container spacing={2}>
-                      {/* Form untuk Insert */}
-                      <Grid>
-                        <input
-                          fullWidth
-                          label="Survei ID"
-                          name="surveiID"
-                          value={currentSurvei.surveiID}
-                          onChange={handleInputChange}
-                          type="hidden"
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Prodi ID"
-                          name="prodiID"
-                          value={formData.prodiID}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Kode Pertanyaan"
-                          name="kodePertanyaan"
-                          value={formData.kodePertanyaan}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Pertanyaan"
-                          name="pertanyaan"
-                          value={formData.pertanyaan}
-                          onChange={handleInputChange}
-                          error={!isPertanyaanValid}
-                          helperText={!isPertanyaanValid ? 'Pertanyaan utama wajib diisi.' : ''}
-                        />
-                      </Grid>
-
-                      {/* Tampilkan pesan error jika pertanyaan utama kosong */}
-                      {error && (
-                        <Grid item xs={12}>
-                          <Typography color="error">{error}</Typography>
-                        </Grid>
-                      )}
-
-                      {/* Form untuk Insert Detail */}
-                      <Grid item xs={12}>
-                        <Typography variant="h6" component="h2" gutterBottom>
-                          Tambah Detail Pertanyaan
-                        </Typography>
-                        {details.map((detail, index) => (
-                          <Grid container spacing={1} key={index}>
-                            <Grid item xs={4}>
-                              <TextField
-                                fullWidth
-                                label="Pertanyaan ID"
-                                name="pertanyaanID"
-                                value={detail.pertanyaanID}
-                                onChange={(e) => handleDetailChange(index, e)}
-                                disabled={!isPertanyaanValid} // Disable input jika pertanyaan utama kosong
-                              />
-                            </Grid>
-                            <Grid item xs={4}>
-                              <TextField
-                                fullWidth
-                                label="Kode Detail"
-                                name="kodePertanyaanDetail"
-                                value={detail.kodePertanyaanDetail}
-                                onChange={(e) => handleDetailChange(index, e)}
-                                disabled={!isPertanyaanValid} // Disable input jika pertanyaan utama kosong
-                              />
-                            </Grid>
-                            <Grid item xs={4}>
-                              <TextField
-                                fullWidth
-                                label="Detail"
-                                name="pertanyaanDetail"
-                                value={detail.pertanyaanDetail}
-                                onChange={(e) => handleDetailChange(index, e)}
-                                disabled={!isPertanyaanValid} // Disable input jika pertanyaan utama kosong
-                              />
-                            </Grid>
-                            <Grid item xs={12} textAlign="right">
-                              <IconButton onClick={() => removeDetailRow(index)} color="error">
-                                <Remove />
-                              </IconButton>
-                              {index === details.length - 1 && (
-                                <IconButton onClick={addDetailRow} color="primary">
-                                  <Add />
-                                </IconButton>
-                              )}
-                            </Grid>
-                          </Grid>
+                    {/* Form untuk Insert */}
+                    <FormControl fullWidth sx={{ marginTop: 2 }}>
+                      <InputLabel
+                        id="prodi-label"
+                        shrink
+                        sx={{
+                          backgroundColor: '#fff',
+                          padding: '0 4px',
+                          marginLeft: '-4px',
+                        }}
+                      >
+                        Program Studi
+                      </InputLabel>
+                      <Select
+                        disabled
+                        labelId="prodi-label"
+                        id="prodi"
+                        name="prodiID"
+                        label="Pilih Prodi"
+                        value={selectedProdiID}
+                      >
+                        {prodiData.map((prodi) => (
+                          <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
+                            {prodi.namaProdi}
+                          </MenuItem>
                         ))}
-                      </Grid>
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      fullWidth
+                      sx={{ marginTop: 2 }}
+                      label="Kode Pertanyaan"
+                      name="kodePertanyaan"
+                      value={formData.kodePertanyaan}
+                      onChange={handleInputChange}
+                    />
+                    <TextField
+                      fullWidth
+                      sx={{ marginTop: 2 }}
+                      label="Pertanyaan"
+                      name="pertanyaan"
+                      value={formData.pertanyaan}
+                      onChange={handleInputChange}
+                      error={!isPertanyaanValid}
+                      helperText={!isPertanyaanValid ? 'Pertanyaan utama wajib diisi.' : ''}
+                      multiline
+                      rows={4}
+                    />
+
+                    {error && (
                       <Grid item xs={12}>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          fullWidth
-                          onClick={handleSubmit}
-                          disabled={!isPertanyaanValid} // Disable tombol jika pertanyaan utama kosong
-                        >
-                          Simpan Data
-                        </Button>
+                        <Typography color="error">{error}</Typography>
                       </Grid>
+                    )}
+
+                    {/* Form untuk Insert Detail */}
+                    <Grid item xs={12} sx={{ mt: 2 }}>
+                      <Typography variant="h6" component="h2" gutterBottom>
+                        Tambah Detail Pertanyaan
+                      </Typography>
+                      {details.map((detail, index) => (
+                        <Grid container spacing={1} key={index} sx={{ mt: 2 }}>
+                          <input
+                            type="hidden"
+                            fullWidth
+                            label="Pertanyaan ID"
+                            name="pertanyaanID"
+                            value={pertanyaanID}
+                            disabled
+                          />
+                          <Grid size={2}>
+                            <TextField
+                              fullWidth
+                              label="Kode Detail"
+                              name="kodePertanyaanDetail"
+                              value={detail.kodePertanyaanDetail}
+                              onChange={(e) => handleDetailChange(index, e)}
+                              disabled={!isPertanyaanValid}
+                            />
+                          </Grid>
+                          <Grid size={9}>
+                            <TextField
+                              fullWidth
+                              label="Pertanyaan"
+                              name="pertanyaanDetail"
+                              value={detail.pertanyaanDetail}
+                              onChange={(e) => handleDetailChange(index, e)}
+                              disabled={!isPertanyaanValid}
+                              multiline
+                              rows={4}
+                            />
+                          </Grid>
+                          <Grid size={1} textAlign="right">
+                            <IconButton onClick={() => removeDetailRow(index)} color="error">
+                              <Remove />
+                            </IconButton>
+                            {index === details.length - 1 && (
+                              <IconButton onClick={addDetailRow} color="primary">
+                                <Add />
+                              </IconButton>
+                            )}
+                          </Grid>
+                        </Grid>
+                      ))}
+                    </Grid>
+                    <Grid item xs={12} mt={3}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleSubmit}
+                        disabled={!isPertanyaanValid}
+                      >
+                        Simpan Data
+                      </Button>
                     </Grid>
                   </Box>
                 </Modal>
@@ -446,7 +474,7 @@ function QuestionAdmin() {
           </Box>
         </Box>
       </Box>
-    </Container>
+    </Container >
   );
 }
 
