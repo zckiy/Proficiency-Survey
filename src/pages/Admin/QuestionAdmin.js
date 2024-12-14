@@ -26,17 +26,16 @@ import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid2";
 import { pertanyaan, survei, pertanyaanDetail } from "../../api/SurveiAPI";
 import SelectionBox from '../Responden/SelectionBox';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { prodi } from '../../api/SurveiAPI';
 import { insertPertanyaan, insertPertanyaanDet } from '../../api/QuestionAPI';
-import { Add, Remove } from '@mui/icons-material';
+import { Add, Remove, BuildCircle, AddCircle } from '@mui/icons-material';
 
 const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '90%',
+  width: '80%',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -53,18 +52,17 @@ function QuestionAdmin() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProdiID, setSelectedProdiID] = useState(1);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [prodiData, setProdiData] = useState([]);
   const [pertanyaanID, setPertanyaanID] = useState(null);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [selectedPertanyaan, setSelectedPertanyaan] = useState(null); // State untuk pertanyaan yang dipilih
 
   const currentSurvei = surveiList[currentPage - 1];
+  const handleClose = () => setOpen(false);
 
   const [formData, setFormData] = useState({
-    surveiID: currentSurvei?.surveiID || 0,
-    prodiID: selectedProdiID,
     kodePertanyaan: '',
     pertanyaan: '',
     setAll: false,
@@ -114,13 +112,14 @@ function QuestionAdmin() {
   }, [selectedProdiID]);
 
   useEffect(() => {
-    if (currentSurvei?.surveiID && formData.surveiID !== currentSurvei.surveiID) {
+    if (currentSurvei?.surveiID) {
       setFormData((prev) => ({
         ...prev,
         surveiID: currentSurvei.surveiID,
+        prodiID: selectedProdiID
       }));
     }
-  }, [currentSurvei]);
+  }, [currentSurvei, selectedProdiID]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -138,10 +137,7 @@ function QuestionAdmin() {
   };
 
   const addDetailRow = () => {
-    setDetails([
-      ...details,
-      { kodePertanyaanDetail: '', pertanyaanDetail: '' },
-    ]);
+    setDetails([...details, { kodePertanyaanDetail: '', pertanyaanDetail: '' }]);
   };
 
   const removeDetailRow = (index) => {
@@ -177,7 +173,26 @@ function QuestionAdmin() {
       }
 
       fetchData();
+      handleClose();
+    } catch (error) {
+      setError('Gagal mengirim data: ' + error.message);
+    }
+  };
 
+  const handleSubmitDetail = async () => {
+
+    setError('');
+    try {
+      const detailsWithPertanyaanID = details.map((detail) => ({
+        ...detail,
+        pertanyaanID: selectedPertanyaan.pertanyaanID,
+      }));
+
+      const responseInsertDetail = await insertPertanyaanDet(detailsWithPertanyaanID);
+
+      alert('Data berhasil dikirim: ' + JSON.stringify(responseInsertDetail.data));
+
+      fetchData();
       handleClose();
     } catch (error) {
       setError('Gagal mengirim data: ' + error.message);
@@ -230,142 +245,211 @@ function QuestionAdmin() {
                 <Grid size={{ xs: 2, md: 1 }}>
                   <List sx={{ display: 'flow-root', mt: 3 }}>
                     <ListItem sx={{ py: 0 }}>
-                      <IconButton onClick={handleOpen} color="primary" sx={{ py: 0 }}>
-                        <AddCircleIcon />
+                      <IconButton onClick={() => setOpen(true)} color="primary" sx={{ py: 0 }}>
+                        <AddCircle />
+                      </IconButton>
+                    </ListItem>
+                    <ListItem sx={{ py: 0, mt: 1 }}>
+                      <IconButton onClick={() => setEdit(true)} color="warning" sx={{ py: 0 }}>
+                        <BuildCircle />
                       </IconButton>
                     </ListItem>
                   </List>
                 </Grid>
-                <Modal open={open} onClose={handleClose}>
-                  <Box sx={modalStyle}>
-                    <Typography variant="h6" component="h2" gutterBottom>
-                      Tambah Pertanyaan
-                    </Typography>
-                    {/* Form untuk Insert */}
-                    <FormControl fullWidth sx={{ marginTop: 2 }}>
-                      <InputLabel
-                        id="prodi-label"
-                        shrink
-                        sx={{
-                          backgroundColor: '#fff',
-                          padding: '0 4px',
-                          marginLeft: '-4px',
-                        }}
-                      >
-                        Program Studi
-                      </InputLabel>
-                      <Select
-                        disabled
-                        labelId="prodi-label"
-                        id="prodi"
-                        name="prodiID"
-                        label="Pilih Prodi"
-                        value={selectedProdiID}
-                      >
-                        {prodiData.map((prodi) => (
-                          <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
-                            {prodi.namaProdi}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      fullWidth
-                      sx={{ marginTop: 2 }}
-                      label="Kode Pertanyaan"
-                      name="kodePertanyaan"
-                      value={formData.kodePertanyaan}
-                      onChange={handleInputChange}
-                    />
-                    <TextField
-                      fullWidth
-                      sx={{ marginTop: 2 }}
-                      label="Pertanyaan"
-                      name="pertanyaan"
-                      value={formData.pertanyaan}
-                      onChange={handleInputChange}
-                      error={!isPertanyaanValid}
-                      helperText={!isPertanyaanValid ? 'Pertanyaan utama wajib diisi.' : ''}
-                      multiline
-                      rows={4}
-                    />
-
-                    {error && (
-                      <Grid item xs={12}>
-                        <Typography color="error">{error}</Typography>
-                      </Grid>
-                    )}
-
-                    {/* Form untuk Insert Detail */}
-                    <Grid item xs={12} sx={{ mt: 2 }}>
-                      <Typography variant="h6" component="h2" gutterBottom>
-                        Tambah Detail Pertanyaan
-                      </Typography>
-                      {details.map((detail, index) => (
-                        <Grid container spacing={1} key={index} sx={{ mt: 2 }}>
-                          <input
-                            type="hidden"
-                            fullWidth
-                            label="Pertanyaan ID"
-                            name="pertanyaanID"
-                            value={pertanyaanID}
-                            disabled
-                          />
-                          <Grid size={2}>
-                            <TextField
-                              fullWidth
-                              label="Kode Detail"
-                              name="kodePertanyaanDetail"
-                              value={detail.kodePertanyaanDetail}
-                              onChange={(e) => handleDetailChange(index, e)}
-                              disabled={!isPertanyaanValid}
-                            />
-                          </Grid>
-                          <Grid size={9}>
-                            <TextField
-                              fullWidth
-                              label="Pertanyaan"
-                              name="pertanyaanDetail"
-                              value={detail.pertanyaanDetail}
-                              onChange={(e) => handleDetailChange(index, e)}
-                              disabled={!isPertanyaanValid}
-                              multiline
-                              rows={4}
-                            />
-                          </Grid>
-                          <Grid size={1} textAlign="right">
-                            <IconButton onClick={() => removeDetailRow(index)} color="error">
-                              <Remove />
-                            </IconButton>
-                            {index === details.length - 1 && (
-                              <IconButton onClick={addDetailRow} color="primary">
-                                <Add />
-                              </IconButton>
-                            )}
-                          </Grid>
-                        </Grid>
-                      ))}
-                    </Grid>
-                    <Grid item xs={12} mt={3}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handleSubmit}
-                        disabled={!isPertanyaanValid}
-                      >
-                        Simpan Data
-                      </Button>
-                    </Grid>
-                  </Box>
-                </Modal>
               </Grid>
+
+              {/* Modal untuk menambah pertanyaan */}
+              <Modal open={open} onClose={() => setOpen(false)}>
+                <Box sx={modalStyle}>
+                  <Typography variant="h6" component="h2" gutterBottom>
+                    Tambah Pertanyaan
+                  </Typography>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel
+                      id="prodi-label"
+                      shrink
+                      sx={{
+                        backgroundColor: '#fff',
+                        padding: '0 4px',
+                        marginLeft: '-4px',
+                      }}
+                    >
+                      Program Studi
+                    </InputLabel>
+                    <Select
+                      disabled
+                      labelId="prodi-label"
+                      id="prodi"
+                      name="prodiID"
+                      label="Pilih Prodi"
+                      value={selectedProdiID}
+                    >
+                      {prodiData.map((prodi) => (
+                        <MenuItem key={prodi.prodiID} value={prodi.prodiID}>
+                          {prodi.namaProdi}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <input
+                    type="hidden"
+                    name="SurveiID"
+                    value={currentSurvei.surveiID}
+                  />
+                  <TextField
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Kode Pertanyaan"
+                    name="kodePertanyaan"
+                    value={formData.kodePertanyaan}
+                    onChange={handleInputChange}
+                  />
+                  <TextField
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Pertanyaan"
+                    name="pertanyaan"
+                    value={formData.pertanyaan}
+                    onChange={handleInputChange}
+                    error={!isPertanyaanValid}
+                    helperText={!isPertanyaanValid ? 'Pertanyaan utama wajib diisi.' : ''}
+                    multiline
+                    rows={4}
+                  />
+
+                  {error && (
+                    <Grid item xs={12}>
+                      <Typography color="error">{error}</Typography>
+                    </Grid>
+                  )}
+
+                  {/* Form untuk Insert Detail */}
+                  <Grid size={12} sx={{ mt: 2 }}>
+                    <Typography variant="h6" component="h2" gutterBottom>
+                      Tambah Detail Pertanyaan
+                    </Typography>
+                    {details.map((detail, index) => (
+                      <Grid container spacing={1} key={index} sx={{ mt: 2 }}>
+                        <input
+                          type="hidden"
+                          name="pertanyaanID"
+                          value={pertanyaanID}
+                          disabled
+                        />
+                        <Grid size={2}>
+                          <TextField
+                            fullWidth
+                            label="Kode Detail"
+                            name="kodePertanyaanDetail"
+                            value={detail.kodePertanyaanDetail}
+                            onChange={(e) => handleDetailChange(index, e)}
+                            disabled={!isPertanyaanValid}
+                          />
+                        </Grid>
+                        <Grid size={9}>
+                          <TextField
+                            fullWidth
+                            label="Pertanyaan"
+                            name="pertanyaanDetail"
+                            value={detail.pertanyaanDetail}
+                            onChange={(e) => handleDetailChange(index, e)}
+                            disabled={!isPertanyaanValid}
+                            multiline
+                            rows={4}
+                          />
+                        </Grid>
+                        <Grid item xs={1} textAlign="right">
+                          <IconButton onClick={() => removeDetailRow(index)} color="error">
+                            <Remove />
+                          </IconButton>
+                          {index === details.length - 1 && (
+                            <IconButton onClick={addDetailRow} color="primary">
+                              <Add />
+                            </IconButton>
+                          )}
+                        </Grid>
+                      </Grid>
+                    ))}
+                  </Grid>
+                  <Grid item xs={12} mt={3}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={handleSubmit}
+                      disabled={!isPertanyaanValid}
+                    >
+                      Simpan Data
+                    </Button>
+                  </Grid>
+                </Box>
+              </Modal>
+
+              {/* Modal untuk detail pertanyaan */}
+              <Modal open={openDetail} onClose={() => setOpenDetail(false)}>
+                <Box sx={modalStyle}>
+                  <Typography variant="h6" component="h2" gutterBottom>
+                    Tambah Detail Pertanyaan
+                  </Typography>
+                  {details.map((detail, index) => (
+                    <Grid container spacing={1} key={index} sx={{ mt: 2 }}>
+                      <input
+                        type="hidden"
+                        name="pertanyaanID"
+                        value={selectedPertanyaan?.pertanyaanID || ''}
+                        disabled
+                      />
+                      <Grid size={2}>
+                        <TextField
+                          fullWidth
+                          label="Kode Detail"
+                          name="kodePertanyaanDetail"
+                          value={detail.kodePertanyaanDetail}
+                          onChange={(e) => handleDetailChange(index, e)}
+                        />
+                      </Grid>
+                      <Grid size={9}>
+                        <TextField
+                          fullWidth
+                          label="Pertanyaan"
+                          name="pertanyaanDetail"
+                          value={detail.pertanyaanDetail}
+                          onChange={(e) => handleDetailChange(index, e)}
+                          multiline
+                          rows={4}
+                        />
+                      </Grid>
+                      <Grid size={1} textAlign="right">
+                        <IconButton onClick={() => removeDetailRow(index)} color="error">
+                          <Remove />
+                        </IconButton>
+                        {index === details.length - 1 && (
+                          <IconButton onClick={addDetailRow} color="primary">
+                            <Add />
+                          </IconButton>
+                        )}
+                      </Grid>
+                    </Grid>
+                  ))}
+                  <Grid size={12} mt={3}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={handleSubmitDetail}
+                    >
+                      Simpan Data
+                    </Button>
+                  </Grid>
+                </Box>
+              </Modal>
+
               {pertanyaanList
                 .filter((p) => p.surveiID === currentSurvei.surveiID)
                 .map((pertanyaanData) => (
                   <Box key={pertanyaanData.pertanyaanID} sx={{ mt: 2 }}>
                     <Grid container spacing={1}>
-                      <Grid size={{ xs: 10, md: 11 }}>
+                      <Grid size={11}>
                         <Card sx={{ borderRadius: 2 }}>
                           <CardHeader
                             title={`${pertanyaanData.kodePertanyaan}. ${pertanyaanData.pertanyaan}`}
@@ -375,9 +459,7 @@ function QuestionAdmin() {
                             <Typography variant="body2" color="text.secondary">
                               Please rate the level of student skills required.
                             </Typography>
-                            <RadioGroup sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}
-                              row
-                            >
+                            <RadioGroup sx={{ display: 'flex', justifyContent: 'center', mt: 2 }} row>
                               {[0, 1, 2, 3, 4, 5].map((value) => (
                                 <FormControlLabel
                                   disabled
@@ -393,18 +475,8 @@ function QuestionAdmin() {
                         </Card>
                       </Grid>
                     </Grid>
-                    <Grid container spacing={1}>
-                      <Grid size={{ xs: 10, md: 11 }}>
-                        <Card sx={{ mt: 2, borderRadius: 2 }}>
-                          <CardContent>
-                            <TextField
-                              fullWidth
-                              label="Optional: Add short explanation"
-                              variant="standard"
-                            />
-                          </CardContent>
-                        </Card>
-
+                    <Grid container spacing={2}>
+                      <Grid size={11}>
                         <Card sx={{ width: '100%', mt: 2, borderRadius: 3 }}>
                           <CardContent sx={{ px: 3 }}>
                             <Typography gutterBottom sx={{ color: 'text.dark', fontSize: 16, mb: 4 }}>
@@ -445,7 +517,6 @@ function QuestionAdmin() {
                                         <Grid size={7} textAlign={'center'} key={value}>
                                           <Radio
                                             disabled
-                                            value={value || 2}
                                             name={`pertanyaanDet-${pertanyaanDetData.pertanyaanDetID}`}
                                             inputProps={{ 'aria-label': value }}
                                           />
@@ -457,6 +528,15 @@ function QuestionAdmin() {
                             </Box>
                           </CardContent>
                         </Card>
+                      </Grid>
+                      <Grid size={1}>
+                        <List sx={{ display: 'flow-root', mt: 3 }}>
+                          <ListItem sx={{ py: 0 }}>
+                            <IconButton onClick={() => { setSelectedPertanyaan(pertanyaanData); setOpenDetail(true); }} color="primary" sx={{ py: 0 }}>
+                              <AddCircle />
+                            </IconButton>
+                          </ListItem>
+                        </List>
                       </Grid>
                     </Grid>
                   </Box>
