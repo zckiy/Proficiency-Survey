@@ -20,6 +20,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import CardHeader from "@mui/material/CardHeader";
@@ -27,8 +32,8 @@ import Grid from "@mui/material/Grid2";
 import { pertanyaan, survei, pertanyaanDetail } from "../../api/SurveiAPI";
 import SelectionBox from '../Responden/SelectionBox';
 import { prodi } from '../../api/SurveiAPI';
-import { insertPertanyaan, insertPertanyaanDet } from '../../api/QuestionAPI';
-import { Add, Remove, BuildCircle, AddCircle } from '@mui/icons-material';
+import { insertPertanyaan, insertPertanyaanDet, deletePertanyaanDet } from '../../api/QuestionAPI';
+import { Add, Remove, BuildCircle, AddCircle, RemoveCircle } from '@mui/icons-material';
 
 const modalStyle = {
   position: 'absolute',
@@ -57,7 +62,8 @@ function QuestionAdmin() {
   const [edit, setEdit] = useState(false);
   const [prodiData, setProdiData] = useState([]);
   const [pertanyaanID, setPertanyaanID] = useState(null);
-  const [selectedPertanyaan, setSelectedPertanyaan] = useState(null); // State untuk pertanyaan yang dipilih
+  const [selectedPertanyaan, setSelectedPertanyaan] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   const currentSurvei = surveiList[currentPage - 1];
   const handleClose = () => setOpen(false);
@@ -198,6 +204,17 @@ function QuestionAdmin() {
       setError('Gagal mengirim data: ' + error.message);
     }
   };
+
+  const handleDeletePertanyaanDet = async (pertanyaanDetID) => {
+    try {
+      setConfirmDialogOpen(false);
+      deletePertanyaanDet(pertanyaanDetID);
+
+      fetchData();
+    } catch (error) {
+      setError('Gagal menghapus data: ' + error.message);
+    }
+  }
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -386,7 +403,7 @@ function QuestionAdmin() {
               </Modal>
 
               {/* Modal untuk detail pertanyaan */}
-              <Modal open={openDetail} onClose={() => setOpenDetail(false)}>
+              <Modal open={openDetail} onClose={() => setOpenDetail(false)} >
                 <Box sx={modalStyle}>
                   <Typography variant="h6" component="h2" gutterBottom>
                     Tambah Detail Pertanyaan
@@ -488,14 +505,16 @@ function QuestionAdmin() {
                                 </Grid>
                                 <Grid size={15}>
                                 </Grid>
-                                <Grid size={7} textAlign={'center'}>
+                                <Grid size={6} textAlign={'center'}>
                                   - (lower)
                                 </Grid>
-                                <Grid size={7} textAlign={'center'}>
+                                <Grid size={6} textAlign={'center'}>
                                   0 (normal)
                                 </Grid>
-                                <Grid size={7} textAlign={'center'}>
+                                <Grid size={6} textAlign={'center'}>
                                   + (higher)
+                                </Grid>
+                                <Grid size={1}>
                                 </Grid>
                               </Grid>
                               {pertanyaanDetList
@@ -514,7 +533,7 @@ function QuestionAdmin() {
                                         </Typography>
                                       </Grid>
                                       {[1, 2, 3].map((value) => (
-                                        <Grid size={7} textAlign={'center'} key={value}>
+                                        <Grid size={6} textAlign={'center'} key={value}>
                                           <Radio
                                             disabled
                                             name={`pertanyaanDet-${pertanyaanDetData.pertanyaanDetID}`}
@@ -522,6 +541,33 @@ function QuestionAdmin() {
                                           />
                                         </Grid>
                                       ))}
+                                      <Grid size={1} sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <IconButton onClick={() => setConfirmDialogOpen(true)} color="error" sx={{ py: 0 }}>
+                                          <RemoveCircle />
+                                        </IconButton>
+                                      </Grid>
+
+                                      <Dialog
+                                        open={confirmDialogOpen}
+                                        onClose={() => setConfirmDialogOpen(false)}
+                                        aria-labelledby="confirm-dialog-title"
+                                        aria-describedby="confirm-dialog-description"
+                                      >
+                                        <DialogTitle id="confirm-dialog-title">Konfirmasi</DialogTitle>
+                                        <DialogContent>
+                                          <DialogContentText id="confirm-dialog-description">
+                                            Apakah Anda yakin ingin menyimpan jawaban?
+                                          </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                          <Button onClick={() => setConfirmDialogOpen(false)} color="secondary">
+                                            Cancel
+                                          </Button>
+                                          <Button onClick={() => { handleDeletePertanyaanDet(pertanyaanDetData.pertanyaanDetID); }} color="primary" autoFocus>
+                                            Save
+                                          </Button>
+                                        </DialogActions>
+                                      </Dialog>
                                     </Grid>
                                   </React.Fragment>
                                 ))}

@@ -28,3 +28,16 @@ export const insertPertanyaanDet = async (data) => {
         throw new Error(error.message);
     }
 };
+
+export const deletePertanyaanDet = async (pertanyaanDetID) => {
+    try {
+        const response = await axios.delete(`${API_BASE_URL}/delete-detail/${pertanyaanDetID}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
