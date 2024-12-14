@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import NavbarAdmin from "./components/NavbarAdmin";
 
-// Pages Responden
 import LandingPage from "./pages/Responden/LandingPage";
 import IsiDataIndustri from "./pages/Responden/IsiDataIndustri";
 import IsiDataAlumni from "./pages/Responden/IsiDataAlumni";
@@ -14,7 +13,6 @@ import Survei from "./pages/Responden/Survei";
 import FinishPage from "./pages/Responden/FinishPage";
 import PilihProdi from "./pages/Responden/PilihProdi";
 
-// Pages Admin
 import LoginAdmin from "./pages/Auth/LoginAdmin";
 import QuestionAdmin from "./pages/Admin/QuestionAdmin";
 
@@ -22,21 +20,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Responden Routes */}
         <Route path="/*" element={<MainLayout />} />
 
-        {/* Admin Routes */}
         <Route path="/admin/*" element={<AdminLayout />} />
       </Routes>
     </Router>
   );
 }
 
-// Layout untuk Responden
 function MainLayout() {
   const location = useLocation();
 
-  // Daftar route tanpa Navbar dan Footer
   const HIDE_NAVBAR_ROUTES = ["/survei", "/finish"];
   const HIDE_FOOTER_ROUTES = ["/industri", "/dosen", "/alumni", "/survei", "/finish", "/diagram"];
 
@@ -61,12 +55,10 @@ function MainLayout() {
   );
 }
 
-// Layout untuk Admin
 function AdminLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
   const location = useLocation();
 
-  // Logout logic
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem("isLoggedIn");
@@ -75,7 +67,7 @@ function AdminLayout() {
   useEffect(() => {
     const loggedInStatus = localStorage.getItem("isLoggedIn");
     setIsLoggedIn(loggedInStatus === "true");
-  }, [location.pathname]); // Memeriksa setiap kali lokasi berubah.
+  }, [location.pathname]); 
 
   if (!isLoggedIn) {
     return (
