@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 import {
   Container,
   Box,
@@ -41,6 +41,14 @@ function LoginAdmin({ onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  useEffect(() => {
+    // Redirect to /admin/question if already logged in
+    if (isLoggedIn) {
+      navigate("/admin/question");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleInputChange = (e) => {
     dispatch({ type: "SET_FIELD", field: e.target.name, value: e.target.value });
@@ -206,3 +214,4 @@ function LoginAdmin({ onLoginSuccess }) {
 }
 
 export default LoginAdmin;
+  

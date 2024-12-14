@@ -49,7 +49,7 @@ function IsiDataAlumni() {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: name === "tahunLulusan" ? Number(value) : value,
+            [name]: name === "tahunLulusan" ? (value === "" ? "" : Number(value)) : value,
         }));
     };
 
