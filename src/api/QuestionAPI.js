@@ -41,3 +41,16 @@ export const deletePertanyaanDet = async (pertanyaanDetID) => {
         throw new Error(error.message);
     }
 };
+
+export const deletePertanyaan = async (pertanyaanID) => {
+    try {
+        const response = await axios.delete(`${API_BASE_URL}/delete/${pertanyaanID}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};

@@ -1,26 +1,17 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, Box, IconButton, Menu, MenuItem, Button } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import React from "react";
+import { AppBar, Toolbar, Typography, Box, IconButton, Button } from "@mui/material";
+import OutputIcon from '@mui/icons-material/Output';
 import Logo from "../assets/images/image.png";
 import { Link, useLocation } from 'react-router-dom';
 
 function NavbarAdmin({ isLoggedIn, onLogout }) {
-  const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget); // Membuka menu pada posisi ikon
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null); // Menutup menu
-  };
-
   const handleLogout = () => {
-    handleMenuClose();
     onLogout && onLogout(); // Memastikan fungsi logout dipanggil jika tersedia
   };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: "#577399" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -77,11 +68,12 @@ function NavbarAdmin({ isLoggedIn, onLogout }) {
             Result
           </Button>
         </Box>
+
         <Box sx={{ width: 500, justifyContent: 'end', display: 'flex', alignItems: 'center' }}>
-          {/* Ikon Akun */}
+          {/* Ikon Logout */}
           <IconButton
             color="inherit"
-            onClick={handleMenuOpen} // Menu muncul saat ikon diklik
+            onClick={handleLogout}
             sx={{
               color: "#fff",
               "&:hover": { backgroundColor: "#6a85a1" },
@@ -89,19 +81,8 @@ function NavbarAdmin({ isLoggedIn, onLogout }) {
               boxShadow: "none",
             }}
           >
-            <AccountCircleIcon fontSize="large" />
+            <OutputIcon style={{ fontSize: '30px' }} />
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)} // Menu terbuka jika anchorEl tidak null
-            onClose={handleMenuClose} // Menutup menu saat klik di luar
-          >
-            {isLoggedIn ? (
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            ) : (
-              <MenuItem onClick={handleMenuClose}>Login</MenuItem>
-            )}
-          </Menu>
         </Box>
       </Toolbar>
     </AppBar>
