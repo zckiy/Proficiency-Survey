@@ -48,17 +48,6 @@ function NavbarAdmin({ isLoggedIn, onLogout }) {
           <Button
             color="inherit"
             component={Link}
-            to="/responses"
-            sx={{
-              borderBottom: isActive('/admin/responses') ? '3px solid #fff' : 'none',
-              textTransform: 'none'
-            }}
-          >
-            Responses
-          </Button>
-          <Button
-            color="inherit"
-            component={Link}
             to="/admin/diagram"
             sx={{
               borderBottom: isActive('/admin/diagram') ? '3px solid #fff' : 'none',
