@@ -9,7 +9,10 @@ function NavbarAdmin({ isLoggedIn, onLogout }) {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    onLogout && onLogout(); // Memastikan fungsi logout dipanggil jika tersedia
+    const confirmLogout = window.confirm("Apakah anda ingin Logout");
+    if (confirmLogout) {
+      onLogout && onLogout(); // Memastikan fungsi logout dipanggil jika tersedia
+    }
   };
 
   return (
