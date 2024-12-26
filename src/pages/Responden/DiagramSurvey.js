@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider, createTheme, CircularProgress, Box } from '@mui/material';
 import SelectionBox from './SelectionBox';
 import { diagramData } from '../../api/DiagramAPI';
 import {
@@ -105,7 +105,11 @@ const DiagramSurvey = () => {
   };
 
   if (!Object.keys(dataSets).length) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (

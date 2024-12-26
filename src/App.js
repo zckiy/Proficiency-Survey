@@ -73,7 +73,7 @@ function AdminLayout() {
     return (
       <Routes>
         <Route path="/login" element={<LoginAdmin onLoginSuccess={() => setIsLoggedIn(true)} />} />
-        <Route path="*" element={<Navigate to="/admin/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );
   }

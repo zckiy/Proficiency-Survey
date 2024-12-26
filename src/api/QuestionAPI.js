@@ -54,3 +54,12 @@ export const deletePertanyaan = async (pertanyaanID) => {
         throw new Error(error.message);
     }
 };
+
+export const getLastDetCodeByID = async (pertanyaanID) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/last-detcode-byid/${pertanyaanID}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};  

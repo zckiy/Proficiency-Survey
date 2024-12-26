@@ -70,7 +70,6 @@ function LoginAdmin({ onLoginSuccess }) {
     try {
       const authResponse = await loginAdmin(formState.username, formState.password);
       if (authResponse.success) {
-        alert(authResponse.message);
         localStorage.setItem("isLoggedIn", "true");
         onLoginSuccess();
         navigate("/admin/question");
@@ -79,7 +78,7 @@ function LoginAdmin({ onLoginSuccess }) {
       }
     } catch (error) {
       console.error(error);
-      setError("Terjadi kesalahan saat mencoba login.");
+      setError("Username atau Password salah.");
     }
   };
 

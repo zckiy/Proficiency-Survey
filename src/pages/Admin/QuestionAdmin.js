@@ -32,7 +32,7 @@ import Grid from "@mui/material/Grid2";
 import { pertanyaan, survei, pertanyaanDetail } from "../../api/SurveiAPI";
 import SelectionBox from '../Responden/SelectionBox';
 import { prodi } from '../../api/SurveiAPI';
-import { insertPertanyaan, insertPertanyaanDet, deletePertanyaanDet, deletePertanyaan } from '../../api/QuestionAPI';
+import { insertPertanyaan, insertPertanyaanDet, deletePertanyaanDet, deletePertanyaan, getLastDetCodeByID } from '../../api/QuestionAPI';
 import { Add, Remove, AddCircle, RemoveCircle } from '@mui/icons-material';
 
 const modalStyle = {
@@ -65,6 +65,8 @@ function QuestionAdmin() {
   const [selectedPertanyaan, setSelectedPertanyaan] = useState(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [selectedPertanyaanDetID, setSelectedPertanyaanDetID] = useState(null);
+  const [currentSurveyCode, setCurrentSurveyCode] = useState('1');
+  const [lastKodePertanyaan, setLastKodePertanyaan] = useState(`${currentSurveyCode}.0`);
   const containerRef = useRef(null);
 
   const currentSurvei = surveiList[currentPage - 1];
@@ -92,15 +94,14 @@ function QuestionAdmin() {
         })
       );
 
-      setPertanyaan(allPertanyaan.flatMap((item) => item.pertanyaan));
+      const flatPertanyaan = allPertanyaan.flatMap((item) => item.pertanyaan);
+      setPertanyaan(flatPertanyaan);
 
       const allPertanyaanDet = await Promise.all(
-        allPertanyaan.flatMap((item) =>
-          item.pertanyaan.map(async (pertanyaanItem) => {
-            const detailData = await pertanyaanDetail(pertanyaanItem.pertanyaanID);
-            return { pertanyaanID: pertanyaanItem.pertanyaanID, detail: detailData };
-          })
-        )
+        flatPertanyaan.map(async (pertanyaanItem) => {
+          const detailData = await pertanyaanDetail(pertanyaanItem.pertanyaanID);
+          return { pertanyaanID: pertanyaanItem.pertanyaanID, detail: detailData };
+        })
       );
 
       setPertanyaanDet(allPertanyaanDet);
@@ -126,8 +127,21 @@ function QuestionAdmin() {
         surveiID: currentSurvei.surveiID,
         prodiID: selectedProdiID
       }));
+
+      const pertanyaanLast = pertanyaanList
+        .flatMap(item => item)
+        .filter(x => x.surveiID === currentSurvei.surveiID);
+
+      if (pertanyaanLast.length > 0) {
+        const lastPertanyaan = pertanyaanLast[pertanyaanLast.length - 1];
+        setCurrentSurveyCode(lastPertanyaan.kodePertanyaan);
+        setLastKodePertanyaan(`${lastPertanyaan.kodePertanyaan}.0`);
+      } else {
+        setCurrentSurveyCode(`${currentSurvei.kode}.0`);
+        setLastKodePertanyaan(`${currentSurvei.kode}.0`);
+      }
     }
-  }, [currentSurvei, selectedProdiID]);
+  }, [currentSurvei, selectedProdiID, pertanyaanList]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -139,13 +153,60 @@ function QuestionAdmin() {
 
   const handleDetailChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedDetails = [...details];
-    updatedDetails[index][name] = value;
-    setDetails(updatedDetails);
+    setDetails((prevDetails) => {
+      const updatedDetails = [...prevDetails];
+      updatedDetails[index][name] = value;
+      return updatedDetails;
+    });
+  };
+
+  const handleOpenModal = () => {
+    setOpen(true);
+
+    const newKodePertanyaan = (parseFloat(lastKodePertanyaan) + 0.1).toFixed(1);
+    const newKodeDetail = `${newKodePertanyaan}.1`;
+
+    setFormData((prev) => ({
+      ...prev,
+      kodePertanyaan: newKodePertanyaan,
+    }));
+
+    setDetails([{ kodePertanyaanDetail: newKodeDetail, pertanyaanDetail: '' }]);
+  };
+
+  const handleOpenModalDetail = async (pertanyaanID) => {
+    setOpenDetail(true);
+
+    try {
+      const data = await getLastDetCodeByID(pertanyaanID);
+
+      if (data.data) {
+        const lastKodeDetail = data.data;
+        const parts = lastKodeDetail.split('.');
+
+        const newKodePertanyaan = parts[0];
+        const newDetailIndex = parseInt(parts[2]) + 1;
+
+        const newKodeDetail = `${newKodePertanyaan}.${parts[1]}.${newDetailIndex}`;
+
+        setDetails([{ kodePertanyaanDetail: newKodeDetail, pertanyaanDetail: '' }]);
+      }
+    } catch (error) {
+      console.error('Error fetching last kode pertanyaan detail:', error);
+    }
   };
 
   const addDetailRow = () => {
-    setDetails([...details, { kodePertanyaanDetail: '', pertanyaanDetail: '' }]);
+    const lastDetail = details[details.length - 1];
+    const parts = lastDetail.kodePertanyaanDetail.split('.');
+
+    const newKodeDetail = `${parts[0]}.${parts[1]}.${parseInt(parts[2]) + 1}`;
+
+    setDetails((prevDetails) => [
+      ...prevDetails,
+      { kodePertanyaanDetail: newKodeDetail, pertanyaanDetail: '' }
+    ]);
+
     setTimeout(() => {
       const lastInput = containerRef.current.lastChild;
       lastInput.scrollIntoView({ behavior: 'smooth' });
@@ -153,8 +214,7 @@ function QuestionAdmin() {
   };
 
   const removeDetailRow = (index) => {
-    const updatedDetails = details.filter((_, i) => i !== index);
-    setDetails(updatedDetails);
+    setDetails((prevDetails) => prevDetails.filter((_, i) => i !== index));
   };
 
   const isPertanyaanValid = formData.pertanyaan.trim() !== '';
@@ -195,7 +255,7 @@ function QuestionAdmin() {
           kodePertanyaanDetail: '',
           pertanyaanDetail: ''
         },
-      ])
+      ]);
 
       fetchData();
       handleClose();
@@ -205,7 +265,6 @@ function QuestionAdmin() {
   };
 
   const handleSubmitDetail = async () => {
-
     setError('');
     try {
       const detailsWithPertanyaanID = details.map((detail) => ({
@@ -217,12 +276,7 @@ function QuestionAdmin() {
 
       alert('Data berhasil dikirim: ' + JSON.stringify(responseInsertDetail.data));
 
-      setDetails([
-        {
-          kodePertanyaanDetail: '',
-          pertanyaanDetail: ''
-        },
-      ])
+      setDetails([{ kodePertanyaanDetail: '', pertanyaanDetail: '' }]);
 
       fetchData();
       setOpenDetail(false);
@@ -234,9 +288,9 @@ function QuestionAdmin() {
   const handleDeletePertanyaan = async (pertanyaanID, pertanyaanDetID) => {
     try {
       if (pertanyaanID != null) {
-        deletePertanyaan(pertanyaanID);
+        await deletePertanyaan(pertanyaanID);
       } else {
-        deletePertanyaanDet(pertanyaanDetID);
+        await deletePertanyaanDet(pertanyaanDetID);
       }
 
       fetchData();
@@ -244,7 +298,7 @@ function QuestionAdmin() {
     } catch (error) {
       setError('Gagal menghapus data: ' + error.message);
     }
-  }
+  };
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -304,7 +358,7 @@ function QuestionAdmin() {
                 <Grid size={{ xs: 2, md: 1 }}>
                   <List sx={{ display: 'flow-root', mt: 3 }}>
                     <ListItem sx={{ py: 0 }}>
-                      <IconButton onClick={() => setOpen(true)} color="primary" sx={{ py: 0 }}>
+                      <IconButton onClick={handleOpenModal} color="primary" sx={{ py: 0 }}>
                         <AddCircle />
                       </IconButton>
                     </ListItem>
@@ -592,7 +646,7 @@ function QuestionAdmin() {
                                           />
                                         </Grid>
                                       ))}
-                                      <Grid size={3} sx={{ display: 'flex', alignItems: 'center',  justifyContent: 'right'}}>
+                                      <Grid size={3} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'right' }}>
                                         <IconButton onClick={() => handleOpenDialog(null, pertanyaanDetData.pertanyaanDetID)} color="error">
                                           <RemoveCircle />
                                         </IconButton>
@@ -607,7 +661,7 @@ function QuestionAdmin() {
                       <Grid size={{ xs: 2, md: 1 }}>
                         <List sx={{ display: 'flow-root', mt: 3 }}>
                           <ListItem sx={{ py: 0 }}>
-                            <IconButton onClick={() => { setSelectedPertanyaan(pertanyaanData); setOpenDetail(true); }} color="primary" sx={{ py: 0 }}>
+                            <IconButton onClick={() => { setSelectedPertanyaan(pertanyaanData); handleOpenModalDetail(pertanyaanData.pertanyaanID); }} color="primary" sx={{ py: 0 }}>
                               <AddCircle />
                             </IconButton>
                           </ListItem>

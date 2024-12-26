@@ -41,6 +41,9 @@ function Navbar() {
             <Button color="inherit" component={Link} to="/diagram" sx={{ mx: 1 }}>
               Result
             </Button>
+            <Button color="inherit" component={Link} to="/admin/login" sx={{ mx: 1 }}>
+              Admin
+            </Button>
           </Box>
         )}
       </Toolbar>
