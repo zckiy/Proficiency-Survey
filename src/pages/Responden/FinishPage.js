@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
-import { Link } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 export default function FinishPage() {
+
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        localStorage.removeItem("captchaVerified");
+        navigate("/");
+    };
+
     return (
         <Container
             maxWidth="md"
@@ -21,7 +29,7 @@ export default function FinishPage() {
                     Terima kasih telah mengisi survei ini. Jawaban Anda sangat berarti bagi kami.
                 </Typography>
 
-                <Button variant="contained" color="primary" sx={{ mt: 3 }} component={Link} to="/">
+                <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleSubmit}>
                     Kembali ke Halaman Utama
                 </Button>
             </Box>

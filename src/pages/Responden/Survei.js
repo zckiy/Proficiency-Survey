@@ -137,7 +137,7 @@ function Survei() {
             await insertJawabanDet(jawabanDet);
 
             setSuccessDialogOpen(true);
-
+            localStorage.removeItem("captchaVerified");
             navigate("/finish");
         } catch (error) {
             console.error(error);

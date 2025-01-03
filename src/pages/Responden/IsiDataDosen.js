@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Container,
     Box,
@@ -14,12 +14,15 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle,    
+    DialogTitle,
+    Card, CardContent
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { insertResponden } from '../../api/RespondenAPI';
 import { prodi } from '../../api/SurveiAPI';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { verifyCaptcha } from '../../api/CaptchAPI';
 
 // Create a custom theme
 const theme = createTheme({
@@ -42,8 +45,35 @@ function IsiDataDosen() {
         prodiID: "",
         jurusanID: "",
     });
+    const [captchaVerified, setCaptchaVerified] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(false);
+    const recaptchaRef = useRef();
 
     const navigate = useNavigate();
+
+    const handleCaptchaChange = async (value) => {
+        if (value) {
+            try {
+                setIsVerifying(true);
+                const result = await verifyCaptcha(value);
+                if (result.success) {
+                    setCaptchaVerified(true);
+                    localStorage.setItem("captchaVerified", "true");
+                } else {
+                    alert("CAPTCHA verification failed. Please try again.");
+                    setCaptchaVerified(false);
+                    recaptchaRef.current.reset();
+                }
+            } catch (error) {
+                console.error("CAPTCHA API Error:", error);
+                alert("Unable to verify CAPTCHA. Please check your internet connection or try again later.");
+                setCaptchaVerified(false);
+                recaptchaRef.current.reset();
+            } finally {
+                setIsVerifying(false);
+            }
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -105,6 +135,37 @@ function IsiDataDosen() {
         }
     }, [formData.jurusanID, prodiData]);
 
+    if (captchaVerified === false) {
+        return (
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '100vh',
+                    }}
+                >
+                    <Card sx={{ minWidth: 275, textAlign: 'center' }}>
+                        <CardContent>
+                            <Typography gutterBottom variant='h7' fontStyle={{ fontWeight: 'bold' }}>
+                                Verify you are not a robot
+                            </Typography>
+                            <ReCAPTCHA
+                                ref={recaptchaRef}
+                                sitekey="6Lc4tawqAAAAAHa-bQtibnYP2BPhxBoKxE3BYyCT"
+                                onChange={handleCaptchaChange}
+                                style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}
+                            />
+                        </CardContent>
+                    </Card>
+                </Box>
+            </ThemeProvider>
+        )
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -163,9 +224,9 @@ function IsiDataDosen() {
                                 id="jurusan-label"
                                 shrink
                                 sx={{
-                                    backgroundColor: '#fff', 
-                                    padding: '0 4px', 
-                                    marginLeft: '-4px', 
+                                    backgroundColor: '#fff',
+                                    padding: '0 4px',
+                                    marginLeft: '-4px',
                                 }}
                             >
                                 Jurusan
@@ -191,8 +252,8 @@ function IsiDataDosen() {
                                 shrink
                                 sx={{
                                     backgroundColor: '#fff',
-                                    padding: '0 4px', 
-                                    marginLeft: '-4px', 
+                                    padding: '0 4px',
+                                    marginLeft: '-4px',
                                 }}
                             >
                                 Program Studi
@@ -220,15 +281,16 @@ function IsiDataDosen() {
                                 color="primary"
                                 sx={{
                                     width: '100%',
-                                    backgroundColor: '#577399',
+                                    backgroundColor: captchaVerified ? '#577399' : '#b0bec5',
                                     textTransform: 'none',
                                     '&:hover': {
-                                        backgroundColor: '#4a6178',
+                                        backgroundColor: captchaVerified ? '#4a6178' : '#b0bec5',
                                     },
                                 }}
                                 onClick={() => setConfirmDialogOpen(true)}
+                                disabled={!captchaVerified || isVerifying}
                             >
-                                Submit
+                                {isVerifying ? "Memverifikasi..." : "Submit"}
                             </Button>
                         </Box>
                     </Box>
