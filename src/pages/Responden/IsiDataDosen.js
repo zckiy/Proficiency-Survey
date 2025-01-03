@@ -48,27 +48,45 @@ function IsiDataDosen() {
     const [captchaVerified, setCaptchaVerified] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const recaptchaRef = useRef();
+    const timeoutRef = useRef();
 
     const navigate = useNavigate();
 
+    const verifyCaptchaWithTimeout = (value, timeout = 10000) => {
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error("Timeout while verifying CAPTCHA"));
+            }, timeout);
+
+            verifyCaptcha(value)
+                .then((result) => {
+                    clearTimeout(timer);
+                    resolve(result);
+                })
+                .catch((err) => {
+                    clearTimeout(timer);
+                    reject(err);
+                });
+        });
+    };
+
     const handleCaptchaChange = async (value) => {
         if (value) {
+            clearTimeout(timeoutRef.current);
             try {
                 setIsVerifying(true);
-                const result = await verifyCaptcha(value);
+                const result = await verifyCaptchaWithTimeout(value);
                 if (result.success) {
                     setCaptchaVerified(true);
                     localStorage.setItem("captchaVerified", "true");
                 } else {
-                    alert("CAPTCHA verification failed. Please try again.");
-                    setCaptchaVerified(false);
-                    recaptchaRef.current.reset();
+                    throw new Error("CAPTCHA verification failed. Please try again.");
                 }
             } catch (error) {
-                console.error("CAPTCHA API Error:", error);
-                alert("Unable to verify CAPTCHA. Please check your internet connection or try again later.");
+                console.error("CAPTCHA Error:", error.message);
+                alert(error.message || "Unable to verify CAPTCHA. Please try again later.");
                 setCaptchaVerified(false);
-                recaptchaRef.current.reset();
+                recaptchaRef.current?.reset();
             } finally {
                 setIsVerifying(false);
             }
