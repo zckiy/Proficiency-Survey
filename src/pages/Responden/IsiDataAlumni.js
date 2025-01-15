@@ -47,46 +47,43 @@ function IsiDataAlumni() {
         }));
     };
 
-    const verifyCaptchaWithTimeout = (value, timeout = 10000) => {
+    const verifyCaptchaWithTimeout = async (token, timeout = 10000) => {
         return new Promise((resolve, reject) => {
-            const timer = setTimeout(() => {
-                reject(new Error("Timeout while verifying CAPTCHA"));
-            }, timeout);
-    
-            verifyCaptcha(value)
-                .then((result) => {
-                    clearTimeout(timer);
-                    resolve(result);
-                })
-                .catch((err) => {
-                    clearTimeout(timer);
-                    reject(err);
-                });
+          const timer = setTimeout(() => reject(new Error('Timeout verifying CAPTCHA')), timeout);
+      
+          verifyCaptcha(token)
+            .then((result) => {
+              clearTimeout(timer);
+              resolve(result);
+            })
+            .catch((error) => {
+              clearTimeout(timer);
+              reject(error);
+            });
         });
-    };
-    
-    const handleCaptchaChange = async (value) => {
+      };
+      
+      const handleCaptchaChange = async (value) => {
         if (value) {
-            clearTimeout(timeoutRef.current);
-            try {
-                setIsVerifying(true);
-                const result = await verifyCaptchaWithTimeout(value);
-                if (result.success) {
-                    setCaptchaVerified(true);
-                    localStorage.setItem("captchaVerified", "true");
-                } else {
-                    throw new Error("CAPTCHA verification failed. Please try again.");
-                }
-            } catch (error) {
-                console.error("CAPTCHA Error:", error.message);
-                alert(error.message || "Unable to verify CAPTCHA. Please try again later.");
-                setCaptchaVerified(false);
-                recaptchaRef.current?.reset();
-            } finally {
-                setIsVerifying(false);
+          try {
+            setIsVerifying(true);
+            const result = await verifyCaptchaWithTimeout(value);
+      
+            if (result.success) {
+              setCaptchaVerified(true);
+              localStorage.setItem('captchaVerified', 'true');
+            } else {
+              throw new Error('CAPTCHA verification failed. Error codes: ' + (result.errorCodes || []).join(', '));
             }
+          } catch (error) {
+            alert(error.message || 'Tidak dapat memverifikasi CAPTCHA. Coba lagi nanti.');
+            setCaptchaVerified(false);
+            recaptchaRef.current?.reset();
+          } finally {
+            setIsVerifying(false);
+          }
         }
-    };    
+      };        
 
     useEffect(() => {
         if (!captchaVerified) {
